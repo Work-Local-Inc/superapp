@@ -236,18 +236,18 @@ def render_overview_page():
     
     with col1:
         if st.button("🛣️ View Full Roadmap", use_container_width=True):
-            st.switch_page("superapp_dashboard.py")
             st.session_state.selected_page = "roadmap"
+            st.rerun()
     
     with col2:
         if st.button("🤖 Ask AI Assistant", use_container_width=True):
-            st.switch_page("superapp_dashboard.py") 
             st.session_state.selected_page = "ai_assistant"
+            st.rerun()
     
     with col3:
         if st.button("📊 Check Progress", use_container_width=True):
-            st.switch_page("superapp_dashboard.py")
             st.session_state.selected_page = "verticals"
+            st.rerun()
     
     st.markdown("---")
     
