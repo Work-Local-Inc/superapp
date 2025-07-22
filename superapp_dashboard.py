@@ -283,7 +283,7 @@ def render_overview_page():
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     
     # Tabbed interface for better organization
-    tab1, tab2, tab3 = st.tabs(["📊 Progress", "🎉 Achievements", "📋 Current Work"])
+    tab1, tab2, tab3 = st.tabs(["Progress", "Achievements", "Current Work"])
     
     with tab1:
         st.markdown("#### Business Vertical Progress")
@@ -311,16 +311,16 @@ def render_overview_page():
         st.plotly_chart(fig, use_container_width=True)
     
     with tab2:
-        st.markdown("#### 🎉 Team Achievements")
+        st.markdown("#### Team Achievements")
         
-        # Team achievements (NO INDIVIDUAL COMPETITION!)
+        # Team achievements
         achievements = [
-            "🏆 Role System Architecture Complete",
-            "📚 Comprehensive Documentation Created", 
-            "💪 Muscle Memory Integration Active",
-            "🔄 Git Repository Successfully Initialized",
-            "🔧 Development Framework Established",
-            "🛣️ Project Roadmap Visualization Added"
+            "Role System Architecture Complete",
+            "Comprehensive Documentation Created", 
+            "Muscle Memory Integration Active",
+            "Git Repository Successfully Initialized",
+            "Development Framework Established",
+            "Project Roadmap Visualization Added"
         ]
         
         # Display in a more organized way
@@ -328,27 +328,27 @@ def render_overview_page():
             if i % 2 == 0:
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.success(f"✅ {achievement}")
+                    st.success(f"• {achievement}")
             else:
                 with col2:
-                    st.success(f"✅ {achievement}")
+                    st.success(f"• {achievement}")
     
     with tab3:
-        st.markdown("#### 📋 Current Focus Areas")
+        st.markdown("#### Current Focus Areas")
         
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**✅ Completed Features**")
+            st.markdown("**Completed Features**")
             completed = data["completed_features"] or ["Dashboard creation", "Role system design", "Project planning"]
             for feature in completed:
-                st.success(f"✅ {feature}")
+                st.success(f"• {feature}")
         
         with col2:
-            st.markdown("**🔄 Active TODOs**") 
+            st.markdown("**Active TODOs**") 
             active = data["active_todos"] or ["Laravel backend implementation", "Food vertical development", "API endpoint creation"]
             for todo in active:
-                st.info(f"🔄 {todo}")
+                st.info(f"• {todo}")
     
     # Clean end of overview page
 
