@@ -391,6 +391,12 @@ def render_ai_assistant_page():
     anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
     openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
     
+    # Debug API key status (show only first few characters for security)
+    if anthropic_key:
+        st.write(f"🔑 Anthropic API Key: {anthropic_key[:8]}..." if len(anthropic_key) > 8 else "🔑 Anthropic API Key: [short key]")
+    if openai_key:
+        st.write(f"🔑 OpenAI API Key: {openai_key[:8]}..." if len(openai_key) > 8 else "🔑 OpenAI API Key: [short key]")
+    
     if anthropic_key or openai_key:
         ai_status = "🤖 **FULL AI MODE ACTIVE**" 
         if anthropic_key:
@@ -529,7 +535,7 @@ Always remember: This dashboard celebrates collective success and supports every
             client = anthropic.Anthropic(api_key=anthropic_key)
             
             response = client.messages.create(
-                model="claude-3-sonnet-20241022",
+                model="claude-3-5-sonnet-20241022",
                 max_tokens=500,
                 system=system_prompt,
                 messages=[{"role": "user", "content": prompt}]
