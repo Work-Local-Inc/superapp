@@ -162,32 +162,19 @@ def render_sidebar():
     st.sidebar.markdown("---")
     
     # Organized navigation with categories
-    st.sidebar.markdown("### **PROJECT MANAGEMENT**")
-    management_pages = {
+    st.sidebar.markdown("### **NAVIGATION**")
+    all_pages = {
         "Project Overview": "overview",
-        "Project Roadmap": "roadmap",
-        "AI Assistant": "ai_assistant"
-    }
-    
-    st.sidebar.markdown("### **DEVELOPMENT TRACKING**") 
-    dev_pages = {
+        "Project Roadmap": "roadmap", 
+        "AI Assistant": "ai_assistant",
         "Role System": "roles",
         "Business Verticals": "verticals",
         "Muscle Memory": "muscle_memory",
         "Performance": "optimization"
     }
     
-    # Create a combined selection with separators
-    all_pages = {}
-    all_pages.update(management_pages)
-    all_pages.update(dev_pages)
-    
-    # Better navigation with groups
-    page_options = (
-        list(management_pages.keys()) + 
-        ["---"] + 
-        list(dev_pages.keys())
-    )
+    # Simple, clear navigation - no confusing separators
+    page_options = list(all_pages.keys())
     
     # Check if a page was selected via button (session state)
     if "selected_page" in st.session_state:
@@ -203,13 +190,9 @@ def render_sidebar():
     else:
         selected_display = "Project Overview"
     
-    # Create selectbox with current selection
-    selected_display = st.sidebar.selectbox("Navigate to:", page_options, 
-                                          index=page_options.index(selected_display) if selected_display in page_options else 0,
-                                          format_func=lambda x: x if x != "---" else "─────────────────")
-    
-    if selected_display == "---":
-        selected_display = "Project Overview"
+    # Use radio buttons instead of dropdown for better UX
+    selected_display = st.sidebar.radio("", page_options, 
+                                       index=page_options.index(selected_display) if selected_display in page_options else 0)
     
     selected_page = all_pages.get(selected_display, "overview")
     
@@ -354,19 +337,19 @@ def render_ai_assistant_page():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("Generate Status Report", use_container_width=True):
+        if st.button("Status Report", use_container_width=True):
             report = generate_status_report()
             st.text_area("Status Report", report, height=200)
     
     with col2:
-        if st.button("Suggest Next Tasks", use_container_width=True):
+        if st.button("Next Tasks", use_container_width=True):
             tasks = suggest_next_tasks()
             st.markdown("#### Suggested Next Tasks:")
             for task in tasks:
                 st.info(f"• {task}")
     
     with col3:
-        if st.button("Identify Optimization Opportunities", use_container_width=True):
+        if st.button("Find Issues", use_container_width=True):
             opportunities = identify_optimizations()
             st.markdown("#### Optimization Opportunities:")
             for opp in opportunities:
@@ -388,7 +371,7 @@ def render_ai_assistant_page():
                 st.markdown(message["content"])
     
     # Chat input
-    if prompt := st.chat_input("Ask me anything about the SuperApp project..."):
+    if prompt := st.chat_input("Ask about the project, team, progress, or get recommendations..."):
         # Add user message to session
         st.session_state.messages.append({"role": "user", "content": prompt})
         
@@ -938,7 +921,7 @@ def render_roadmap_page():
     }
     
     for member, info in team_roadmap.items():
-        with st.expander(f"👤 {member} - {info['role']}"):
+        with st.expander(f"{member} - {info['role']}"):
             col1, col2 = st.columns(2)
             
             with col1:
