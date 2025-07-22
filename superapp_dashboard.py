@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 🚀 SuperApp Command Center Dashboard
-AI-powered project management with Muscle Memory integration
+AI-powered project management and team coordination
 NO DRAMA - Just pure collaboration and progress tracking!
 """
 
@@ -34,8 +34,7 @@ except ImportError:
     OPENAI_AVAILABLE = False
     print("🔧 OpenAI not available - using fallback responses")
 
-# Muscle Memory will be imported when needed
-MUSCLE_MEMORY_AVAILABLE = False
+# Muscle Memory available for development workflows (not dashboard UI)
 
 # Configure the page
 st.set_page_config(
@@ -171,7 +170,6 @@ def render_sidebar():
         "AI Assistant": "ai_assistant",
         "Role System": "roles",
         "Business Verticals": "verticals",
-        "Muscle Memory": "muscle_memory",
         "Performance": "optimization"
     }
     
@@ -622,59 +620,6 @@ def render_role_tracker_page():
         st.progress(progress / 100)
         st.caption(f"{progress}% complete")
 
-def render_muscle_memory_page():
-    """Render Muscle Memory analytics"""
-    st.markdown("# Muscle Memory Analytics")
-    
-    # Try to import and use Muscle Memory
-    try:
-        from superapp_muscle_memory import SuperAppMemory
-        memory = SuperAppMemory()
-        stats = memory.get_stats()
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.metric("Cache Hits", stats.get("cache_hits", 0))
-        
-        with col2:
-            st.metric("Cache Misses", stats.get("cache_misses", 0))
-        
-        with col3:
-            cache_rate = 0
-            total = stats.get("cache_hits", 0) + stats.get("cache_misses", 0)
-            if total > 0:
-                cache_rate = (stats.get("cache_hits", 0) / total) * 100
-            st.metric("Cache Hit Rate", f"{cache_rate:.1f}%")
-        
-        st.markdown("---")
-        st.success("Muscle Memory is actively learning and optimizing your workflows!")
-        
-    except ImportError as e:
-        st.warning("Muscle Memory system loading...")
-        st.info("Dashboard works in basic mode while muscle-mem package initializes")
-        
-        # Show some placeholder metrics
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Cache Hits", "Loading...")
-        with col2:
-            st.metric("Cache Misses", "Loading...") 
-        with col3:
-            st.metric("Cache Hit Rate", "Loading...")
-            
-    except Exception as e:
-        st.error("🚨 Muscle Memory initialization error")
-        st.code(f"Error: {str(e)}")
-        
-        # Show some placeholder metrics
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Cache Hits", "Error")
-        with col2:
-            st.metric("Cache Misses", "Error") 
-        with col3:
-            st.metric("Cache Hit Rate", "Error")
 
 def render_verticals_page():
     """Render business verticals progress"""
@@ -989,8 +934,7 @@ def main():
         render_ai_assistant_page()
     elif selected_page == "roles":
         render_role_tracker_page()
-    elif selected_page == "muscle_memory":
-        render_muscle_memory_page()
+
     elif selected_page == "verticals":
         render_verticals_page()
     elif selected_page == "optimization":
