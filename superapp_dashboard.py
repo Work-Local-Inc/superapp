@@ -81,13 +81,7 @@ st.markdown("""
         display: inline-block;
         font-size: 0.9rem;
     }
-    .collaboration-focus {
-        background-color: #E8F5E8;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 5px solid #4CAF50;
-        margin: 1rem 0;
-    }
+
     .nav-section {
         background-color: #F8F9FA;
         padding: 0.5rem;
@@ -230,11 +224,7 @@ def render_sidebar():
     # Update session state to match selectbox
     st.session_state.selected_page = selected_page
     
-    # Team status (NO COMPETITION!)
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### 👥 Team Collaboration")
-    st.sidebar.success("🟢 All team members active")
-    st.sidebar.info("💡 Focus: Supporting each other's success!")
+    # Clean sidebar section
     
     # Quick stats
     data = load_project_data()
@@ -329,7 +319,7 @@ def render_overview_page():
             "📚 Comprehensive Documentation Created", 
             "💪 Muscle Memory Integration Active",
             "🔄 Git Repository Successfully Initialized",
-            "🤝 Team Collaboration Framework Established",
+            "🔧 Development Framework Established",
             "🛣️ Project Roadmap Visualization Added"
         ]
         
@@ -360,27 +350,7 @@ def render_overview_page():
             for todo in active:
                 st.info(f"🔄 {todo}")
     
-    # Team status summary at bottom
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
-    st.markdown("### 👥 Team Collaboration Status")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown("**James Walker**")
-        st.info("🎯 Project Leadership")
-        
-    with col2:
-        st.markdown("**Nick Denysov**") 
-        st.info("🛠️ Backend Development")
-        
-    with col3:
-        st.markdown("**Pavel**")
-        st.info("💻 Full-Stack Support")
-        
-    with col4:
-        st.markdown("**Brian**")
-        st.info("📊 Optimization & Analytics")
+    # Clean end of overview page
 
 def render_ai_assistant_page():
     """Render the AI assistant page"""
@@ -501,9 +471,7 @@ GUIDELINES:
 - Suggest concrete next steps when appropriate
 - Use emojis and formatting to be engaging
 - Keep responses concise but informative
-- Focus on collaboration and team success
-
-Always remember: This dashboard celebrates collective success and supports everyone's growth!"""
+- Be helpful and actionable for the team"""
 
     # Try Anthropic Claude first
     if ANTHROPIC_AVAILABLE and anthropic_key:
@@ -622,9 +590,8 @@ NEXT PRIORITIES:
 3. Role system database implementation
 4. Payment integration planning
 
-TEAM COLLABORATION:
-All team members actively contributing with clear responsibilities.
-Focus remains on mutual support and shared success."""
+TEAM STATUS:
+All team members actively contributing with clear responsibilities."""
     
     return report
 
