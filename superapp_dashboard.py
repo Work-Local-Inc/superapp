@@ -41,34 +41,77 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for styling
+    # Enhanced CSS for better UI/UX and mobile responsiveness
 st.markdown("""
 <style>
     .main-header {
-        font-size: 3rem;
+        font-size: 2.5rem;
         color: #FF6B6B;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .main-header {
+            font-size: 2rem;
+        }
+        .stColumns > div {
+            margin-bottom: 1rem;
+        }
     }
     .metric-card {
         background-color: #F0F2F6;
         padding: 1rem;
         border-radius: 0.5rem;
         border-left: 5px solid #FF6B6B;
+        margin-bottom: 1rem;
     }
     .achievement-badge {
         background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
         color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        margin: 0.25rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 15px;
+        margin: 0.2rem;
         display: inline-block;
+        font-size: 0.9rem;
     }
     .collaboration-focus {
         background-color: #E8F5E8;
         padding: 1rem;
         border-radius: 0.5rem;
         border-left: 5px solid #4CAF50;
+        margin: 1rem 0;
+    }
+    .nav-section {
+        background-color: #F8F9FA;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        margin: 0.5rem 0;
+    }
+    .quick-action-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        margin: 0.5rem 0;
+    }
+    .section-divider {
+        border-top: 2px solid #E1E5E9;
+        margin: 2rem 0 1rem 0;
+    }
+    /* Better spacing and readability */
+    .stMetric {
+        background-color: #FFFFFF;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #E1E5E9;
+    }
+    /* Sidebar improvements */
+    .css-1d391kg {
+        padding-top: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -118,20 +161,50 @@ def load_project_data():
 def render_sidebar():
     """Render the navigation sidebar"""
     st.sidebar.markdown("# 🚀 SuperApp Command")
+    
+    # Quick status widget
+    data = load_project_data()
+    st.sidebar.markdown("### ⚡ Quick Status")
+    st.sidebar.success(f"🎯 Phase: {data['current_phase'].title()}")
+    st.sidebar.info(f"🍕 Focus: {data['active_vertical'].title()} Vertical")
+    st.sidebar.metric("📝 Commits", data["git_commits"], delta="Active Development")
+    
     st.sidebar.markdown("---")
     
-    # Navigation
-    pages = {
+    # Organized navigation with categories
+    st.sidebar.markdown("### 📋 **PROJECT MANAGEMENT**")
+    management_pages = {
         "🏠 Project Overview": "overview",
         "🛣️ Project Roadmap": "roadmap",
-        "🤖 AI Assistant": "ai_assistant", 
-        "🎭 Role Tracker": "roles",
-        "💪 Muscle Memory": "muscle_memory",
-        "🏗️ Vertical Progress": "verticals",
-        "📊 Optimization": "optimization"
+        "🤖 AI Assistant": "ai_assistant"
     }
     
-    selected_page = st.sidebar.selectbox("Navigate to:", list(pages.keys()))
+    st.sidebar.markdown("### 🔧 **DEVELOPMENT TRACKING**") 
+    dev_pages = {
+        "🎭 Role System": "roles",
+        "🏗️ Business Verticals": "verticals",
+        "💪 Muscle Memory": "muscle_memory",
+        "📊 Performance": "optimization"
+    }
+    
+    # Create a combined selection with separators
+    all_pages = {}
+    all_pages.update(management_pages)
+    all_pages.update(dev_pages)
+    
+    # Better navigation with groups
+    page_options = (
+        list(management_pages.keys()) + 
+        ["---"] + 
+        list(dev_pages.keys())
+    )
+    
+    selected_display = st.sidebar.selectbox("Navigate to:", page_options, format_func=lambda x: x if x != "---" else "─────────────────")
+    
+    if selected_display == "---":
+        selected_display = "🏠 Project Overview"
+    
+    selected_page = all_pages.get(selected_display, "overview")
     
     # Team status (NO COMPETITION!)
     st.sidebar.markdown("---")
@@ -153,50 +226,78 @@ def render_overview_page():
     """Render the main project overview page"""
     st.markdown('<h1 class="main-header">🚀 SuperApp Command Center</h1>', unsafe_allow_html=True)
     
+    # Quick navigation cards at the top
+    st.markdown("### 🎯 Quick Access")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("🛣️ View Full Roadmap", use_container_width=True):
+            st.switch_page("superapp_dashboard.py")
+            st.session_state.selected_page = "roadmap"
+    
+    with col2:
+        if st.button("🤖 Ask AI Assistant", use_container_width=True):
+            st.switch_page("superapp_dashboard.py") 
+            st.session_state.selected_page = "ai_assistant"
+    
+    with col3:
+        if st.button("📊 Check Progress", use_container_width=True):
+            st.switch_page("superapp_dashboard.py")
+            st.session_state.selected_page = "verticals"
+    
+    st.markdown("---")
+    
     data = load_project_data()
     
-    # Main metrics row
+    # Main metrics row - with better visual hierarchy
+    st.markdown("### 📈 Project Status")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Current Phase", data["current_phase"].title(), "🎯")
+        st.metric("Current Phase", data["current_phase"].title(), "🎯 Active")
     
     with col2:
-        st.metric("Active Vertical", data["active_vertical"].title(), "🍕")
+        st.metric("Active Vertical", data["active_vertical"].title(), "🍕 Focus")
     
     with col3:
-        st.metric("Team Members", len(data["team_members"]), "👥")
+        st.metric("Team Members", len(data["team_members"]), "👥 Collaborating")
     
     with col4:
-        st.metric("Git Commits", data["git_commits"], "📝")
+        st.metric("Git Commits", data["git_commits"], "📝 Progress")
     
-    # Progress visualization
-    st.markdown("---")
-    col1, col2 = st.columns(2)
+    # Progress visualization with better layout
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     
-    with col1:
-        st.markdown("### 🎯 Vertical Progress")
+    # Tabbed interface for better organization
+    tab1, tab2, tab3 = st.tabs(["📊 Progress", "🎉 Achievements", "📋 Current Work"])
+    
+    with tab1:
+        st.markdown("#### 🎯 Business Vertical Progress")
         
-        # Create progress chart
+        # Create progress chart with better styling
         verticals = list(data["role_progress"].keys())
         progress = list(data["role_progress"].values())
         
         fig = go.Figure(data=[
             go.Bar(x=verticals, y=progress, 
-                  marker_color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'])
+                  marker_color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
+                  text=[f"{p}%" for p in progress],
+                  textposition='auto')
         ])
         
         fig.update_layout(
-            title="Business Vertical Implementation Progress",
+            title="Business Vertical Implementation",
             yaxis_title="Completion %",
             xaxis_title="Business Type",
-            showlegend=False
+            showlegend=False,
+            height=400,
+            margin=dict(t=50, b=50, l=50, r=50)
         )
         
         st.plotly_chart(fig, use_container_width=True)
     
-    with col2:
-        st.markdown("### 🎉 Recent Achievements")
+    with tab2:
+        st.markdown("#### 🎉 Team Achievements")
         
         # Team achievements (NO INDIVIDUAL COMPETITION!)
         achievements = [
@@ -204,28 +305,58 @@ def render_overview_page():
             "📚 Comprehensive Documentation Created", 
             "💪 Muscle Memory Integration Active",
             "🔄 Git Repository Successfully Initialized",
-            "🤝 Team Collaboration Framework Established"
+            "🤝 Team Collaboration Framework Established",
+            "🛣️ Project Roadmap Visualization Added"
         ]
         
-        for achievement in achievements:
-            st.markdown(f'<div class="achievement-badge">{achievement}</div>', 
-                       unsafe_allow_html=True)
+        # Display in a more organized way
+        for i, achievement in enumerate(achievements):
+            if i % 2 == 0:
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.success(f"✅ {achievement}")
+            else:
+                with col2:
+                    st.success(f"✅ {achievement}")
     
-    # Active work
-    st.markdown("---")
-    st.markdown("### 🔄 Current Focus Areas")
+    with tab3:
+        st.markdown("#### 📋 Current Focus Areas")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**✅ Completed Features**")
+            completed = data["completed_features"] or ["Dashboard creation", "Role system design", "Project planning"]
+            for feature in completed:
+                st.success(f"✅ {feature}")
+        
+        with col2:
+            st.markdown("**🔄 Active TODOs**") 
+            active = data["active_todos"] or ["Laravel backend implementation", "Food vertical development", "API endpoint creation"]
+            for todo in active:
+                st.info(f"🔄 {todo}")
     
-    col1, col2 = st.columns(2)
+    # Team status summary at bottom
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+    st.markdown("### 👥 Team Collaboration Status")
+    
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.markdown("#### ✅ Completed Features")
-        for feature in data["completed_features"]:
-            st.success(f"✅ {feature}")
-    
+        st.markdown("**James Walker**")
+        st.info("🎯 Project Leadership")
+        
     with col2:
-        st.markdown("#### 🔄 Active TODOs")
-        for todo in data["active_todos"]:
-            st.info(f"🔄 {todo}")
+        st.markdown("**Nick Denysov**") 
+        st.info("🛠️ Backend Development")
+        
+    with col3:
+        st.markdown("**Pavel**")
+        st.info("💻 Full-Stack Support")
+        
+    with col4:
+        st.markdown("**Brian**")
+        st.info("📊 Optimization & Analytics")
 
 def render_ai_assistant_page():
     """Render the AI assistant page"""
