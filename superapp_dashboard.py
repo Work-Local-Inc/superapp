@@ -490,7 +490,7 @@ def generate_fallback_response(prompt):
     prompt_lower = prompt.lower()
     
     if "status" in prompt_lower or "progress" in prompt_lower:
-        return """🎯 **Project Status Update**:
+        return """**Project Status Update**:
 
 **Current Phase**: Initialization → MVP transition  
 **Progress**: Role system architecture complete, dashboard deployed  
@@ -501,7 +501,7 @@ def generate_fallback_response(prompt):
 - Brian: Optimization and performance tracking  
 - James: Project coordination and stakeholder updates
 
-The team is making excellent collaborative progress! 🚀"""
+The team is making excellent collaborative progress!"""
     
     elif "nick" in prompt_lower or "backend" in prompt_lower:
         return """🛠️ **Backend Development Guidance**:
@@ -677,9 +677,9 @@ def render_roadmap_page():
             with open("SUPERAPP_CONTEXT.md", 'r') as f:
                 content = f.read()
                 if "initialization" in content.lower():
-                    current_phase = "🎯 Initialization"
+                    current_phase = "Initialization"
                 elif "mvp" in content.lower():
-                    current_phase = "🚀 MVP Development"
+                    current_phase = "MVP Development"
     except:
         pass
     
@@ -688,55 +688,55 @@ def render_roadmap_page():
     # Phase timeline
     phases = [
         {
-            "phase": "🎯 Phase 1: Foundation",
-            "status": "✅ Complete",
+            "phase": "Phase 1: Foundation",
+            "status": "Complete",
             "duration": "Week 1-2",
             "progress": 100,
             "items": [
-                "✅ Project architecture defined",
-                "✅ Role system designed", 
-                "✅ Entity structure (Account/Business/User)",
-                "✅ Tech stack confirmed (Laravel + AI)",
-                "✅ Documentation & memory bank created"
+                "Project architecture defined",
+                "Role system designed", 
+                "Entity structure (Account/Business/User)",
+                "Tech stack confirmed (Laravel + AI)",
+                "Documentation & memory bank created"
             ]
         },
         {
-            "phase": "🚀 Phase 2: Backend Core",
-            "status": "🔄 In Progress",
+            "phase": "Phase 2: Backend Core",
+            "status": "In Progress",
             "duration": "Week 3-6", 
             "progress": 45,
             "items": [
-                "🔄 Laravel backend initialization",
-                "🔄 Role system implementation",
-                "🔄 Database schema & migrations",
-                "⏳ API endpoints for core functions",
-                "⏳ Authentication & authorization"
+                "Laravel backend initialization",
+                "Role system implementation",
+                "Database schema & migrations",
+                "API endpoints for core functions",
+                "Authentication & authorization"
             ]
         },
         {
-            "phase": "🍕 Phase 3: Food Vertical MVP",
-            "status": "⏳ Planned",
+            "phase": "Phase 3: Food Vertical MVP",
+            "status": "Planned",
             "duration": "Week 7-10",
             "progress": 0,
             "items": [
-                "⏳ Menu management system",
-                "⏳ Order processing workflow",
-                "⏳ Payment integration (Stripe)",
-                "⏳ Commission tracking",
-                "⏳ Basic admin dashboard"
+                "Menu management system",
+                "Order processing workflow",
+                "Payment integration (Stripe)",
+                "Commission tracking",
+                "Basic admin dashboard"
             ]
         },
         {
-            "phase": "🏢 Phase 4: Multi-Tenant Scale",
-            "status": "🎯 Future",
+            "phase": "Phase 4: Multi-Tenant Scale",
+            "status": "Future",
             "duration": "Week 11-14",
             "progress": 0,
             "items": [
-                "⏳ Multiple business support",
-                "⏳ Community organization features", 
-                "⏳ Advanced role permissions",
-                "⏳ Performance optimization",
-                "⏳ Mobile app foundation"
+                "Multiple business support",
+                "Community organization features", 
+                "Advanced role permissions",
+                "Performance optimization",
+                "Mobile app foundation"
             ]
         }
     ]
@@ -750,39 +750,39 @@ def render_roadmap_page():
             
             # Items
             for item in phase['items']:
-                if item.startswith("✅"):
-                    st.success(item)
-                elif item.startswith("🔄"):
-                    st.info(item)
+                if phase['status'] == "Complete":
+                    st.success(f"✅ {item}")
+                elif phase['status'] == "In Progress":
+                    st.info(f"🔄 {item}")
                 else:
-                    st.warning(item)
+                    st.warning(f"⏳ {item}")
     
     # Business verticals roadmap
     st.markdown("---")
-    st.markdown("### 🏢 Business Verticals Roadmap")
+    st.markdown("### Business Verticals Roadmap")
     
     verticals_timeline = {
-        "🍕 Food Services": {
+        "Food Services": {
             "launch": "Q1 2024",
-            "status": "🔄 MVP Development",
+            "status": "MVP Development",
             "features": ["Online ordering", "Menu management", "Payment processing"],
             "revenue_target": "$10k/month by month 3"
         },
-        "💆 Spa/Wellness": {
+        "Spa/Wellness": {
             "launch": "Q2 2024", 
-            "status": "📋 Planned",
+            "status": "Planned",
             "features": ["Booking system", "Service management", "Client profiles"],
             "revenue_target": "$15k/month by month 6"
         },
-        "🏋️ Fitness/Gym": {
+        "Fitness/Gym": {
             "launch": "Q3 2024",
-            "status": "🎯 Research",
+            "status": "Research",
             "features": ["Membership management", "Class booking", "Trainer scheduling"],
             "revenue_target": "$20k/month by month 9"
         },
-        "🔧 Trade Services": {
+        "Trade Services": {
             "launch": "Q4 2024",
-            "status": "💡 Concept",
+            "status": "Concept",
             "features": ["Quote management", "Job scheduling", "Inventory tracking"],
             "revenue_target": "$25k/month by month 12"
         }
@@ -820,7 +820,7 @@ def render_roadmap_page():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 🚨 Blockers & Dependencies")
+        st.markdown("#### Blockers & Dependencies")
         blockers = [
             "Laravel backend completion → Food vertical development",
             "Role system implementation → Multi-tenant features",
@@ -829,7 +829,7 @@ def render_roadmap_page():
         ]
         
         for blocker in blockers:
-            st.warning(f"⚠️ {blocker}")
+            st.warning(f"• {blocker}")
     
     with col2:
         st.markdown("#### Success Milestones")
@@ -841,11 +841,11 @@ def render_roadmap_page():
         ]
         
         for milestone in milestones:
-            st.info(f"🎯 {milestone}")
+            st.info(f"• {milestone}")
     
     # Team allocation
     st.markdown("---")
-    st.markdown("### 👥 Team Allocation & Responsibilities")
+    st.markdown("### Team Allocation & Responsibilities")
     
     team_roadmap = {
         "James Walker": {
@@ -903,9 +903,9 @@ def render_optimization_page():
     st.markdown("### Current Optimization Goals")
     
     goals = [
-        {"goal": "Reduce Laravel API response time", "target": "<200ms", "current": "350ms", "status": "🔄"},
-        {"goal": "Increase role system reusability", "target": "90%", "current": "75%", "status": "🔄"},
-        {"goal": "Improve documentation coverage", "target": "95%", "current": "88%", "status": "🔄"}
+        {"goal": "Reduce Laravel API response time", "target": "<200ms", "current": "350ms", "status": "In Progress"},
+        {"goal": "Increase role system reusability", "target": "90%", "current": "75%", "status": "In Progress"},
+        {"goal": "Improve documentation coverage", "target": "95%", "current": "88%", "status": "In Progress"}
     ]
     
     for goal in goals:
