@@ -1,0 +1,18 @@
+[project]
+name = "superapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.58.2",
+    "gitpython>=3.1.44",
+    "muscle-mem>=0.1.0",
+    "openai>=1.97.1",
+    "pandas>=2.3.1",
+    "plotly>=6.2.0",
+    "psutil>=7.0.0",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "streamlit>=1.47.0",
+]

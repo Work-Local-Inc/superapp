@@ -8,38 +8,40 @@ import json
 import time
 from dataclasses import dataclass
 from typing import Dict, List, Any, Optional
-# Muscle Memory fallback implementation (no external dependency needed)
-print("💪 SuperApp Muscle Memory: Using built-in implementation")
-
-class Engine:
-    def __init__(self): 
-        self.functions = {}
-        self.agent = None
-        self.cache = {}
+try:
+    from muscle_mem import Engine, Check
+    print("💪 SuperApp Muscle Memory: Using official muscle-mem package")
+    MUSCLE_MEMORY_AVAILABLE = True
+except ImportError:
+    print("⚠️  Muscle Memory package not available. Using fallback implementation.")
+    # Fallback implementation for development
+    class Engine:
+        def __init__(self): 
+            self.functions = {}
+            self.agent = None
+            self.cache = {}
+        def function(self, pre_check=None):
+            def decorator(func):
+                self.functions[func.__name__] = func
+                func._pre_check = pre_check
+                return func
+            return decorator
+        def set_agent(self, agent):
+            self.agent = agent
+            return self
+        def finalize(self):
+            return self
+        def __call__(self, task, tags=None):
+            if self.agent:
+                return self.agent(task)
+            return "No agent configured"
     
-    def function(self, pre_check=None):
-        def decorator(func):
-            self.functions[func.__name__] = func
-            func._pre_check = pre_check
-            return func
-        return decorator
+    class Check:
+        def __init__(self, capture, compare):
+            self.capture = capture
+            self.compare = compare
     
-    def set_agent(self, agent):
-        self.agent = agent
-        return self
-    
-    def finalize(self):
-        return self
-    
-    def __call__(self, task, tags=None):
-        if self.agent:
-            return self.agent(task)
-        return "No agent configured"
-
-class Check:
-    def __init__(self, capture, compare):
-        self.capture = capture
-        self.compare = compare
+    MUSCLE_MEMORY_AVAILABLE = False
 import os
 from pathlib import Path
 
@@ -241,7 +243,10 @@ def documentation_agent(task: str) -> str:
 
 # Configure the main engine with project management agent
 project_engine = engine  # Use the same engine that has the decorated functions
-# project_engine.set_agent(project_management_agent).finalize()
+if MUSCLE_MEMORY_AVAILABLE:
+    project_engine.set_agent(project_management_agent).finalize()
+else:
+    print("💪 Running in fallback mode - muscle memory features limited")
 
 # Configure documentation engine  
 docs_engine = Engine()
