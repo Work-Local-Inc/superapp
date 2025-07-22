@@ -164,7 +164,7 @@ def load_project_data():
 
 def render_sidebar():
     """Render the navigation sidebar"""
-    st.sidebar.markdown("# 🚀 SuperApp Command")
+    st.sidebar.markdown("# SuperApp Command")
     
     # Quick status widget
     data = load_project_data()
@@ -364,7 +364,7 @@ def render_overview_page():
 
 def render_ai_assistant_page():
     """Render the AI assistant page"""
-    st.markdown("# 🤖 SuperApp AI Assistant")
+    st.markdown("# SuperApp AI Assistant")
     st.markdown("### Your intelligent project companion!")
     
     # Check AI availability
@@ -650,7 +650,7 @@ def identify_optimizations():
 
 def render_role_tracker_page():
     """Render the role system tracking page"""
-    st.markdown("# 🎭 Role System Tracker")
+    st.markdown("# Role System Tracker")
     
     data = load_project_data()
     
@@ -681,7 +681,7 @@ def render_role_tracker_page():
 
 def render_muscle_memory_page():
     """Render Muscle Memory analytics"""
-    st.markdown("# 💪 Muscle Memory Analytics")
+    st.markdown("# Muscle Memory Analytics")
     
     # Try to import and use Muscle Memory
     try:
@@ -735,7 +735,7 @@ def render_muscle_memory_page():
 
 def render_verticals_page():
     """Render business verticals progress"""
-    st.markdown("# 🏗️ Business Vertical Development")
+    st.markdown("# Business Vertical Development")
     
     data = load_project_data()
     
@@ -779,7 +779,7 @@ def render_verticals_page():
 
 def render_roadmap_page():
     """Render the project roadmap from SUPERAPP_CONTEXT.md"""
-    st.markdown("# 🛣️ SuperApp Project Roadmap")
+    st.markdown("# SuperApp Project Roadmap")
     st.markdown("### Strategic development timeline and priorities")
     
     # Read current status from context file
@@ -996,7 +996,7 @@ def render_roadmap_page():
 
 def render_optimization_page():
     """Render optimization tracking"""
-    st.markdown("# 📊 Optimization Dashboard")
+    st.markdown("# Optimization Dashboard")
     
     # Development velocity simulation
     dates = [datetime.now() - timedelta(days=x) for x in range(30, 0, -1)]
