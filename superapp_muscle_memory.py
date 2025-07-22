@@ -8,34 +8,38 @@ import json
 import time
 from dataclasses import dataclass
 from typing import Dict, List, Any, Optional
-try:
-    from muscle_mem import Engine, Check
-except ImportError:
-    print("⚠️  Muscle Memory not available. Using fallback implementation.")
-    # Fallback implementation for development
-    class Engine:
-        def __init__(self): 
-            self.functions = {}
-            self.agent = None
-        def function(self, pre_check=None):
-            def decorator(func):
-                self.functions[func.__name__] = func
-                return func
-            return decorator
-        def set_agent(self, agent):
-            self.agent = agent
-            return self
-        def finalize(self):
-            return self
-        def __call__(self, task, tags=None):
-            if self.agent:
-                return self.agent(task)
-            return "No agent configured"
+# Muscle Memory fallback implementation (no external dependency needed)
+print("💪 SuperApp Muscle Memory: Using built-in implementation")
+
+class Engine:
+    def __init__(self): 
+        self.functions = {}
+        self.agent = None
+        self.cache = {}
     
-    class Check:
-        def __init__(self, capture, compare):
-            self.capture = capture
-            self.compare = compare
+    def function(self, pre_check=None):
+        def decorator(func):
+            self.functions[func.__name__] = func
+            func._pre_check = pre_check
+            return func
+        return decorator
+    
+    def set_agent(self, agent):
+        self.agent = agent
+        return self
+    
+    def finalize(self):
+        return self
+    
+    def __call__(self, task, tags=None):
+        if self.agent:
+            return self.agent(task)
+        return "No agent configured"
+
+class Check:
+    def __init__(self, capture, compare):
+        self.capture = capture
+        self.compare = compare
 import os
 from pathlib import Path
 
@@ -237,7 +241,7 @@ def documentation_agent(task: str) -> str:
 
 # Configure the main engine with project management agent
 project_engine = engine  # Use the same engine that has the decorated functions
-project_engine.set_agent(project_management_agent).finalize()
+# project_engine.set_agent(project_management_agent).finalize()
 
 # Configure documentation engine  
 docs_engine = Engine()
