@@ -203,12 +203,32 @@ def render_sidebar():
         list(dev_pages.keys())
     )
     
-    selected_display = st.sidebar.selectbox("Navigate to:", page_options, format_func=lambda x: x if x != "---" else "─────────────────")
+    # Check if a page was selected via button (session state)
+    if "selected_page" in st.session_state:
+        selected_page = st.session_state.selected_page
+        # Find the display name for this page
+        selected_display = None
+        for display, page_value in all_pages.items():
+            if page_value == selected_page:
+                selected_display = display
+                break
+        if selected_display is None:
+            selected_display = "🏠 Project Overview"
+    else:
+        selected_display = "🏠 Project Overview"
+    
+    # Create selectbox with current selection
+    selected_display = st.sidebar.selectbox("Navigate to:", page_options, 
+                                          index=page_options.index(selected_display) if selected_display in page_options else 0,
+                                          format_func=lambda x: x if x != "---" else "─────────────────")
     
     if selected_display == "---":
         selected_display = "🏠 Project Overview"
     
     selected_page = all_pages.get(selected_display, "overview")
+    
+    # Update session state to match selectbox
+    st.session_state.selected_page = selected_page
     
     # Team status (NO COMPETITION!)
     st.sidebar.markdown("---")
@@ -231,7 +251,7 @@ def render_overview_page():
     st.markdown('<h1 class="main-header">🚀 SuperApp Command Center</h1>', unsafe_allow_html=True)
     
     # Quick navigation cards at the top
-    st.markdown("### 🎯 Quick Access")
+    st.markdown("### Quick Access")
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -276,7 +296,7 @@ def render_overview_page():
     tab1, tab2, tab3 = st.tabs(["📊 Progress", "🎉 Achievements", "📋 Current Work"])
     
     with tab1:
-        st.markdown("#### 🎯 Business Vertical Progress")
+        st.markdown("#### Business Vertical Progress")
         
         # Create progress chart with better styling
         verticals = list(data["role_progress"].keys())
@@ -365,7 +385,7 @@ def render_overview_page():
 def render_ai_assistant_page():
     """Render the AI assistant page"""
     st.markdown("# SuperApp AI Assistant")
-    st.markdown("### Your intelligent project companion! 🚀")
+    st.markdown("### Your intelligent project companion!")
     
     # Check AI availability
     anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
@@ -421,7 +441,7 @@ def render_ai_assistant_page():
     
     # Quick action buttons
     st.markdown("---")
-    st.markdown("### 🚀 Quick Actions")
+    st.markdown("### Quick Actions")
     
     col1, col2, col3 = st.columns(3)
     
@@ -927,7 +947,7 @@ def render_roadmap_page():
     
     # Critical path & dependencies
     st.markdown("---")
-    st.markdown("### ⚡ Critical Path & Dependencies")
+    st.markdown("### Critical Path & Dependencies")
     
     col1, col2 = st.columns(2)
     
@@ -944,7 +964,7 @@ def render_roadmap_page():
             st.warning(f"⚠️ {blocker}")
     
     with col2:
-        st.markdown("#### 🎯 Success Milestones")
+        st.markdown("#### Success Milestones")
         milestones = [
             "First food order processed (Week 8)",
             "10 businesses onboarded (Week 12)",
@@ -1012,7 +1032,7 @@ def render_optimization_page():
     
     # Optimization goals
     st.markdown("---")
-    st.markdown("### 🎯 Current Optimization Goals")
+    st.markdown("### Current Optimization Goals")
     
     goals = [
         {"goal": "Reduce Laravel API response time", "target": "<200ms", "current": "350ms", "status": "🔄"},
