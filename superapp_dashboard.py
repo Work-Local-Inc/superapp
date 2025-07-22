@@ -17,6 +17,19 @@ import time
 import subprocess
 import sys
 
+# AI Integration
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+
 # Muscle Memory will be imported when needed
 MUSCLE_MEMORY_AVAILABLE = False
 
@@ -218,9 +231,33 @@ def render_ai_assistant_page():
     st.markdown("# 🤖 SuperApp AI Assistant")
     st.markdown("### Your intelligent project companion!")
     
+    # Check AI availability
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
+    openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
+    
+    if anthropic_key or openai_key:
+        ai_status = "🤖 **FULL AI MODE ACTIVE**" 
+        if anthropic_key:
+            ai_status += " (Claude)"
+        elif openai_key:
+            ai_status += " (GPT-4)"
+    else:
+        ai_status = "🔧 **BASIC MODE** - Add API key for full AI capabilities"
+    
+    st.info(ai_status)
+    
     st.markdown('<div class="collaboration-focus">', unsafe_allow_html=True)
     st.markdown("💡 **Collaboration Focus**: This AI is here to help the ENTIRE team succeed together!")
     st.markdown('</div>', unsafe_allow_html=True)
+    
+    # API Key configuration (expandable)
+    with st.expander("🔑 Configure AI (Optional)"):
+        st.markdown("**To activate full AI capabilities:**")
+        st.markdown("1. Get an API key from [Anthropic](https://console.anthropic.com/) or [OpenAI](https://platform.openai.com/)")
+        st.markdown("2. Add to Streamlit secrets or environment variables:")
+        st.code("ANTHROPIC_API_KEY=your_key_here")
+        st.markdown("3. Restart the dashboard")
+        st.markdown("**Current status**: Working in basic mode with project-aware responses!")
     
     # Chat interface
     if "messages" not in st.session_state:
@@ -271,50 +308,156 @@ def render_ai_assistant_page():
             for opp in opportunities:
                 st.warning(f"• {opp}")
 
+def get_project_context():
+    """Get comprehensive project context for AI"""
+    data = load_project_data()
+    
+    # Read key project files for context
+    context_parts = []
+    
+    # Project overview
+    context_parts.append(f"""
+SUPERAPP PROJECT OVERVIEW:
+- Current Phase: {data['current_phase']}
+- Active Vertical: {data['active_vertical']} 
+- Team: {', '.join(data['team_members'])}
+- Git Commits: {data['git_commits']}
+- Active TODOs: {len(data['active_todos'])}
+- Completed Features: {len(data['completed_features'])}
+""")
+    
+    # Try to read context files
+    try:
+        if Path("SUPERAPP_CONTEXT.md").exists():
+            with open("SUPERAPP_CONTEXT.md", 'r') as f:
+                context_parts.append(f"PROJECT CONTEXT:\n{f.read()[:2000]}")
+    except:
+        pass
+    
+    try:
+        if Path("user_roles_plan.md").exists():
+            with open("user_roles_plan.md", 'r') as f:
+                context_parts.append(f"ROLE SYSTEM:\n{f.read()[:2000]}")
+    except:
+        pass
+    
+    return "\n\n".join(context_parts)
+
 def generate_ai_response(prompt):
-    """Generate AI response (simplified version)"""
+    """Generate AI response using real LLM"""
+    
+    # Get API keys from environment or Streamlit secrets
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
+    openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
+    
+    project_context = get_project_context()
+    
+    system_prompt = f"""You are the SuperApp AI Assistant, an expert on this specific project. You have complete context about:
+
+{project_context}
+
+GUIDELINES:
+- Be helpful, specific, and actionable
+- Reference actual project details when relevant
+- Support the ENTIRE team's success (no individual competition)
+- Suggest concrete next steps when appropriate
+- Use emojis and formatting to be engaging
+- Keep responses concise but informative
+- Focus on collaboration and team success
+
+Always remember: This dashboard celebrates collective success and supports everyone's growth!"""
+
+    # Try Anthropic Claude first
+    if ANTHROPIC_AVAILABLE and anthropic_key:
+        try:
+            client = anthropic.Anthropic(api_key=anthropic_key)
+            
+            response = client.messages.create(
+                model="claude-3-sonnet-20241022",
+                max_tokens=500,
+                system=system_prompt,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            
+            return response.content[0].text
+            
+        except Exception as e:
+            st.error(f"Claude API error: {str(e)[:100]}")
+    
+    # Try OpenAI as fallback
+    if OPENAI_AVAILABLE and openai_key:
+        try:
+            client = openai.OpenAI(api_key=openai_key)
+            
+            response = client.chat.completions.create(
+                model="gpt-4",
+                max_tokens=500,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            st.error(f"OpenAI API error: {str(e)[:100]}")
+    
+    # Fallback to simulated responses
+    return generate_fallback_response(prompt)
+
+def generate_fallback_response(prompt):
+    """Fallback responses when no AI available"""
     prompt_lower = prompt.lower()
     
     if "status" in prompt_lower or "progress" in prompt_lower:
-        return """Based on the current project state:
+        return """🎯 **Project Status Update**:
 
-🎯 **Current Phase**: Initialization complete, moving to MVP development
-🍕 **Food Vertical**: 85% complete - excellent progress on role system
-👥 **Team Status**: All members actively contributing
-💪 **Muscle Memory**: Successfully integrated and learning patterns
+**Current Phase**: Initialization → MVP transition  
+**Progress**: Role system architecture complete, dashboard deployed  
+**Next Priority**: Laravel backend implementation
 
-**Next Priority**: Nick and Pavel should focus on Laravel backend implementation using the role system architecture we've defined."""
+**Team Focus**:
+- Nick/Pavel: Backend development with role system
+- Brian: Optimization and performance tracking  
+- James: Project coordination and stakeholder updates
+
+The team is making excellent collaborative progress! 🚀"""
     
     elif "nick" in prompt_lower or "backend" in prompt_lower:
-        return """For Nick and the backend team:
+        return """🛠️ **Backend Development Guidance**:
 
-🎯 **Priority Tasks**:
-1. Implement core Laravel role system using our permissions matrix
-2. Set up Account/Business/User entity relationships  
+**Priority Tasks for Nick/Pavel**:
+1. Implement Laravel role system using our permissions matrix
+2. Set up Account/Business/User entity relationships
 3. Create API endpoints for food vertical
-4. Integrate with Muscle Memory for pattern caching
+4. Database schema for multi-tenant architecture
 
-💡 **Suggestion**: Start with Phase 1 roles (Owner, Admin, Manager, Staff) and build from there."""
+**Suggestion**: Start with Phase 1 roles (Owner, Admin, Manager, Staff) and build incrementally! 💪"""
     
-    elif "role" in prompt_lower:
-        return """The role system is well-architected:
+    elif "ai" in prompt_lower or "chat" in prompt_lower:
+        return """🤖 **AI Assistant Setup**:
 
-✅ **Completed**: Comprehensive role plan with permissions matrix
-🔄 **In Progress**: Laravel implementation
-📋 **Design**: 4-tier structure with business-specific specializations
+To activate full AI capabilities:
+1. Set up API keys in Streamlit secrets or environment variables
+2. Add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
+3. Restart the dashboard
 
-The separation of Customers as a separate entity (not roles) was a brilliant architectural decision!"""
+**Currently running in basic mode** with project-aware fallback responses! 🚀"""
     
     else:
-        return f"""I understand you're asking about: "{prompt}"
+        return f"""💡 **SuperApp AI Assistant**:
 
-I have complete context about the SuperApp project including:
-- Role system architecture and permissions
-- Business vertical planning (food, spa, gym, trade)  
-- Team responsibilities and current tasks
-- Muscle Memory integration and optimization tracking
+I can help with:
+- Project status and progress updates
+- Team task recommendations  
+- Architecture and technical questions
+- Role system implementation guidance
+- Optimization opportunities
 
-Could you be more specific about what aspect you'd like me to help with? I'm here to support the entire team's success! 🚀"""
+**Pro tip**: For full AI capabilities, configure API keys in the dashboard settings!
+
+Ask me anything about the SuperApp project! 🎯"""
 
 def generate_status_report():
     """Generate a status report"""
