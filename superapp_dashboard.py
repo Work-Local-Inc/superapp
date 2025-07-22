@@ -17,15 +17,13 @@ import time
 import subprocess
 import sys
 
-# AI Integration - Optional imports for Streamlit Cloud
-ANTHROPIC_AVAILABLE = False
-OPENAI_AVAILABLE = False
-
+# AI Integration - Dynamic imports for Streamlit Cloud
 try:
     import anthropic
     ANTHROPIC_AVAILABLE = True
     print("✅ Anthropic imported successfully")
 except ImportError:
+    ANTHROPIC_AVAILABLE = False
     print("🔧 Anthropic not available - using fallback responses")
 
 try:
@@ -33,6 +31,7 @@ try:
     OPENAI_AVAILABLE = True
     print("✅ OpenAI imported successfully")
 except ImportError:
+    OPENAI_AVAILABLE = False
     print("🔧 OpenAI not available - using fallback responses")
 
 # Muscle Memory will be imported when needed
