@@ -843,44 +843,7 @@ def render_roadmap_page():
         for milestone in milestones:
             st.info(f"• {milestone}")
     
-    # Team allocation
-    st.markdown("---")
-    st.markdown("### Team Allocation & Responsibilities")
-    
-    team_roadmap = {
-        "James Walker": {
-            "role": "Project Lead & Strategy",
-            "current": "Stakeholder coordination, product vision",
-            "next": "Business development, partnership strategy"
-        },
-        "Nick Denysov": {
-            "role": "Backend Lead", 
-            "current": "Laravel API development, role system",
-            "next": "Food vertical implementation, database optimization"
-        },
-        "Pavel": {
-            "role": "Full-Stack Developer",
-            "current": "Supporting backend development",
-            "next": "Frontend integration, mobile app foundation"
-        },
-        "Brian": {
-            "role": "Optimization & Performance",
-            "current": "Project management dashboard, Muscle Memory",
-            "next": "Performance monitoring, AI workflow optimization"
-        }
-    }
-    
-    for member, info in team_roadmap.items():
-        with st.expander(f"{member} - {info['role']}"):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("**Current Focus**:")
-                st.info(info['current'])
-            
-            with col2:
-                st.markdown("**Next Phase**:")
-                st.success(info['next'])
+
 
 def render_optimization_page():
     """Render optimization tracking"""
