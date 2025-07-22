@@ -14,7 +14,7 @@ import json
 import os
 from pathlib import Path
 import time
-import subprocess
+
 import sys
 
 # AI Integration - Dynamic imports for Streamlit Cloud
@@ -122,7 +122,7 @@ def load_project_data():
         "team_members": ["James Walker", "Nick Denysov", "Pavel", "Brian"],
         "completed_features": [],
         "active_todos": [],
-        "git_commits": 0,
+
         "role_progress": {
             "food": 85,
             "spa": 20,
@@ -132,14 +132,6 @@ def load_project_data():
     }
     
     # Try to load real data
-    try:
-        # Check if we have git commits
-        result = subprocess.run(['git', 'rev-list', '--count', 'HEAD'], 
-                              capture_output=True, text=True, cwd='.')
-        if result.returncode == 0:
-            data["git_commits"] = int(result.stdout.strip())
-    except:
-        pass
     
     # Load TODOs if available
     todos_file = Path("todos.json")
@@ -165,7 +157,7 @@ def render_sidebar():
     st.sidebar.markdown("### Quick Status")
     st.sidebar.success(f"Phase: {data['current_phase'].title()}")
     st.sidebar.info(f"Focus: {data['active_vertical'].title()} Vertical")
-    st.sidebar.metric("Commits", data["git_commits"], delta="Active Development")
+
     
     st.sidebar.markdown("---")
     
@@ -230,7 +222,6 @@ def render_sidebar():
     data = load_project_data()
     st.sidebar.markdown("---")
     st.sidebar.markdown("### Quick Stats")
-    st.sidebar.metric("Git Commits", data["git_commits"])
     st.sidebar.metric("Active TODOs", len(data["active_todos"]))
     st.sidebar.metric("Completed Features", len(data["completed_features"]))
     
@@ -265,7 +256,7 @@ def render_overview_page():
     
     # Main metrics row - with better visual hierarchy
     st.markdown("### Project Status")
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         st.metric("Current Phase", data["current_phase"].title(), "Active")
@@ -275,9 +266,6 @@ def render_overview_page():
     
     with col3:
         st.metric("Team Members", len(data["team_members"]), "Collaborating")
-    
-    with col4:
-        st.metric("Git Commits", data["git_commits"], "Progress")
     
     # Progress visualization with better layout
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
@@ -429,7 +417,6 @@ SUPERAPP PROJECT OVERVIEW:
 - Current Phase: {data['current_phase']}
 - Active Vertical: {data['active_vertical']} 
 - Team: {', '.join(data['team_members'])}
-- Git Commits: {data['git_commits']}
 - Active TODOs: {len(data['active_todos'])}
 - Completed Features: {len(data['completed_features'])}
 """)
@@ -575,7 +562,6 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
 OVERVIEW:
 - Phase: {data['current_phase'].title()}
 - Active Vertical: {data['active_vertical'].title()}
-- Git Commits: {data['git_commits']}
 - Team Members: {len(data['team_members'])}
 
 PROGRESS:
