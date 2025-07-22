@@ -162,27 +162,27 @@ def render_sidebar():
     
     # Quick status widget
     data = load_project_data()
-    st.sidebar.markdown("### ⚡ Quick Status")
-    st.sidebar.success(f"🎯 Phase: {data['current_phase'].title()}")
-    st.sidebar.info(f"🍕 Focus: {data['active_vertical'].title()} Vertical")
-    st.sidebar.metric("📝 Commits", data["git_commits"], delta="Active Development")
+    st.sidebar.markdown("### Quick Status")
+    st.sidebar.success(f"Phase: {data['current_phase'].title()}")
+    st.sidebar.info(f"Focus: {data['active_vertical'].title()} Vertical")
+    st.sidebar.metric("Commits", data["git_commits"], delta="Active Development")
     
     st.sidebar.markdown("---")
     
     # Organized navigation with categories
-    st.sidebar.markdown("### 📋 **PROJECT MANAGEMENT**")
+    st.sidebar.markdown("### **PROJECT MANAGEMENT**")
     management_pages = {
-        "🏠 Project Overview": "overview",
-        "🛣️ Project Roadmap": "roadmap",
-        "🤖 AI Assistant": "ai_assistant"
+        "Project Overview": "overview",
+        "Project Roadmap": "roadmap",
+        "AI Assistant": "ai_assistant"
     }
     
-    st.sidebar.markdown("### 🔧 **DEVELOPMENT TRACKING**") 
+    st.sidebar.markdown("### **DEVELOPMENT TRACKING**") 
     dev_pages = {
-        "🎭 Role System": "roles",
-        "🏗️ Business Verticals": "verticals",
-        "💪 Muscle Memory": "muscle_memory",
-        "📊 Performance": "optimization"
+        "Role System": "roles",
+        "Business Verticals": "verticals",
+        "Muscle Memory": "muscle_memory",
+        "Performance": "optimization"
     }
     
     # Create a combined selection with separators
@@ -207,9 +207,9 @@ def render_sidebar():
                 selected_display = display
                 break
         if selected_display is None:
-            selected_display = "🏠 Project Overview"
+            selected_display = "Project Overview"
     else:
-        selected_display = "🏠 Project Overview"
+        selected_display = "Project Overview"
     
     # Create selectbox with current selection
     selected_display = st.sidebar.selectbox("Navigate to:", page_options, 
@@ -217,7 +217,7 @@ def render_sidebar():
                                           format_func=lambda x: x if x != "---" else "─────────────────")
     
     if selected_display == "---":
-        selected_display = "🏠 Project Overview"
+        selected_display = "Project Overview"
     
     selected_page = all_pages.get(selected_display, "overview")
     
@@ -229,7 +229,7 @@ def render_sidebar():
     # Quick stats
     data = load_project_data()
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### 📈 Quick Stats")
+    st.sidebar.markdown("### Quick Stats")
     st.sidebar.metric("Git Commits", data["git_commits"])
     st.sidebar.metric("Active TODOs", len(data["active_todos"]))
     st.sidebar.metric("Completed Features", len(data["completed_features"]))
@@ -238,24 +238,24 @@ def render_sidebar():
 
 def render_overview_page():
     """Render the main project overview page"""
-    st.markdown('<h1 class="main-header">🚀 SuperApp Command Center</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">SuperApp Command Center</h1>', unsafe_allow_html=True)
     
     # Quick navigation cards at the top
     st.markdown("### Quick Access")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🛣️ View Full Roadmap", use_container_width=True):
+        if st.button("View Full Roadmap", use_container_width=True):
             st.session_state.selected_page = "roadmap"
             st.rerun()
     
     with col2:
-        if st.button("🤖 Ask AI Assistant", use_container_width=True):
+        if st.button("Ask AI Assistant", use_container_width=True):
             st.session_state.selected_page = "ai_assistant"
             st.rerun()
     
     with col3:
-        if st.button("📊 Check Progress", use_container_width=True):
+        if st.button("Check Progress", use_container_width=True):
             st.session_state.selected_page = "verticals"
             st.rerun()
     
@@ -264,20 +264,20 @@ def render_overview_page():
     data = load_project_data()
     
     # Main metrics row - with better visual hierarchy
-    st.markdown("### 📈 Project Status")
+    st.markdown("### Project Status")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Current Phase", data["current_phase"].title(), "🎯 Active")
+        st.metric("Current Phase", data["current_phase"].title(), "Active")
     
     with col2:
-        st.metric("Active Vertical", data["active_vertical"].title(), "🍕 Focus")
+        st.metric("Active Vertical", data["active_vertical"].title(), "Focus")
     
     with col3:
-        st.metric("Team Members", len(data["team_members"]), "👥 Collaborating")
+        st.metric("Team Members", len(data["team_members"]), "Collaborating")
     
     with col4:
-        st.metric("Git Commits", data["git_commits"], "📝 Progress")
+        st.metric("Git Commits", data["git_commits"], "Progress")
     
     # Progress visualization with better layout
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
@@ -366,19 +366,19 @@ def render_ai_assistant_page():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📊 Generate Status Report", use_container_width=True):
+        if st.button("Generate Status Report", use_container_width=True):
             report = generate_status_report()
             st.text_area("Status Report", report, height=200)
     
     with col2:
-        if st.button("🎯 Suggest Next Tasks", use_container_width=True):
+        if st.button("Suggest Next Tasks", use_container_width=True):
             tasks = suggest_next_tasks()
             st.markdown("#### Suggested Next Tasks:")
             for task in tasks:
                 st.info(f"• {task}")
     
     with col3:
-        if st.button("🔍 Identify Optimization Opportunities", use_container_width=True):
+        if st.button("Identify Optimization Opportunities", use_container_width=True):
             opportunities = identify_optimizations()
             st.markdown("#### Optimization Opportunities:")
             for opp in opportunities:
