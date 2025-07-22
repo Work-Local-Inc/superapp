@@ -1,0 +1,18 @@
+[server]
+enableWebsocketCompression = false
+enableXsrfProtection = false
+enableCORS = false
+
+[client]
+showSidebarNavigation = false
+
+[logger]
+level = "error"
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#FF6B6B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6" 
