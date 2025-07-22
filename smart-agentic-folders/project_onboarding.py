@@ -202,8 +202,10 @@ class ProjectOnboarding:
     def generate_dashboard(self):
         """Generate customized dashboard based on project type"""
         
-        # Copy the SuperApp dashboard as template and customize
-        template_path = Path("superapp_dashboard.py")
+        # Get the path to Smart Agentic Folders templates
+        script_dir = Path(__file__).parent
+        template_path = script_dir / "template_dashboard.py"
+        
         if template_path.exists():
             with open(template_path, "r") as f:
                 dashboard_content = f.read()
@@ -262,6 +264,33 @@ class ProjectOnboarding:
                 f.write(req + "\n")
         
         print(f"✅ Generated requirements.txt")
+
+    def generate_muscle_memory(self):
+        """Generate customized muscle memory system"""
+        
+        script_dir = Path(__file__).parent
+        template_path = script_dir / "template_muscle_memory.py"
+        
+        if template_path.exists():
+            with open(template_path, "r") as f:
+                muscle_content = f.read()
+            
+            # Customize for this project
+            muscle_content = muscle_content.replace(
+                "SuperApp", 
+                self.answers['project_name']
+            )
+            muscle_content = muscle_content.replace(
+                "superapp", 
+                self.answers['project_name'].lower().replace(" ", "_")
+            )
+            
+            with open("project_muscle_memory.py", "w") as f:
+                f.write(muscle_content)
+            
+            print(f"✅ Generated project_muscle_memory.py")
+        else:
+            print("⚠️  Template muscle memory not found")
 
     def save_config(self):
         """Save configuration for future reference"""
@@ -352,6 +381,7 @@ def main():
     print("\n🔧 Generating your Smart Agentic Project structure...")
     onboarding.generate_project_context()
     onboarding.generate_dashboard()
+    onboarding.generate_muscle_memory()
     onboarding.generate_requirements()
     onboarding.generate_readme()
     onboarding.save_config()
