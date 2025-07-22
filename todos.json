@@ -1,0 +1,45 @@
+{
+  "todos": [
+    {
+      "id": "dashboard_complete",
+      "content": "SuperApp dashboard design and deployment",
+      "status": "completed"
+    },
+    {
+      "id": "ai_integration",
+      "content": "Claude/GPT-4 AI assistant integration",
+      "status": "completed"
+    },
+    {
+      "id": "role_architecture",
+      "content": "Complete role system architecture",
+      "status": "completed"
+    },
+    {
+      "id": "laravel_backend", 
+      "content": "Initialize Laravel backend structure",
+      "status": "in_progress"
+    },
+    {
+      "id": "food_api",
+      "content": "Develop food vertical API endpoints",
+      "status": "pending"
+    },
+    {
+      "id": "database_schema",
+      "content": "Implement database schema and migrations",
+      "status": "pending"
+    },
+    {
+      "id": "payment_integration",
+      "content": "Plan and implement Stripe payment integration",
+      "status": "pending"
+    },
+    {
+      "id": "role_permissions",
+      "content": "Code role-based permission system",
+      "status": "in_progress"
+    }
+  ],
+  "last_updated": "2025-01-22T15:30:00Z"
+} 

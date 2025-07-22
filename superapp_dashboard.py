@@ -120,9 +120,20 @@ def load_project_data():
         "current_phase": "initialization",
         "active_vertical": "food",
         "team_members": ["James Walker", "Nick Denysov", "Pavel", "Brian"],
-        "completed_features": [],
-        "active_todos": [],
-
+        "completed_features": [
+            "Dashboard creation and deployment",
+            "Role system architecture design", 
+            "Project documentation",
+            "AI assistant integration",
+            "Muscle Memory setup"
+        ],
+        "active_todos": [
+            "Laravel backend initialization",
+            "Food vertical API development",
+            "Database schema implementation",
+            "Payment integration planning",
+            "Role permissions coding"
+        ],
         "role_progress": {
             "food": 85,
             "spa": 20,
@@ -152,16 +163,7 @@ def render_sidebar():
     """Render the navigation sidebar"""
     st.sidebar.markdown("# SuperApp Command")
     
-    # Quick status widget
-    data = load_project_data()
-    st.sidebar.markdown("### Quick Status")
-    st.sidebar.success(f"Phase: {data['current_phase'].title()}")
-    st.sidebar.info(f"Focus: {data['active_vertical'].title()} Vertical")
-
-    
-    st.sidebar.markdown("---")
-    
-    # Organized navigation with categories
+    # Navigation first - most important
     st.sidebar.markdown("### **NAVIGATION**")
     all_pages = {
         "Project Overview": "overview",
@@ -199,10 +201,13 @@ def render_sidebar():
     # Update session state to match selectbox
     st.session_state.selected_page = selected_page
     
-    # Clean sidebar section
-    
-    # Quick stats
+    # Quick Status section - after navigation
     data = load_project_data()
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### Quick Status")
+    st.sidebar.success(f"Phase: {data['current_phase'].title()}")
+    st.sidebar.info(f"Focus: {data['active_vertical'].title()} Vertical")
+    
     st.sidebar.markdown("---")
     st.sidebar.markdown("### Quick Stats")
     st.sidebar.metric("Active TODOs", len(data["active_todos"]))
