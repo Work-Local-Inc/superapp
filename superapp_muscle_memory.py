@@ -236,12 +236,13 @@ def documentation_agent(task: str) -> str:
 # ===== ENGINE SETUP =====
 
 # Configure the main engine with project management agent
-project_engine = Engine()
+project_engine = engine  # Use the same engine that has the decorated functions
 project_engine.set_agent(project_management_agent).finalize()
 
-# Configure documentation engine
+# Configure documentation engine  
 docs_engine = Engine()
-docs_engine.set_agent(documentation_agent).finalize()
+docs_engine.set_agent(documentation_agent)
+# Don't finalize docs_engine since it has no tools registered
 
 # ===== MAIN INTERFACE =====
 

@@ -17,13 +17,8 @@ import time
 import subprocess
 import sys
 
-# Import our Muscle Memory system
-try:
-    from superapp_muscle_memory import SuperAppMemory, capture_project_state
-    MUSCLE_MEMORY_AVAILABLE = True
-except ImportError:
-    MUSCLE_MEMORY_AVAILABLE = False
-    st.warning("🔧 Muscle Memory system not available - running in basic mode")
+# Muscle Memory will be imported when needed
+MUSCLE_MEMORY_AVAILABLE = False
 
 # Configure the page
 st.set_page_config(
@@ -409,34 +404,43 @@ def render_muscle_memory_page():
     """Render Muscle Memory analytics"""
     st.markdown("# 💪 Muscle Memory Analytics")
     
-    if MUSCLE_MEMORY_AVAILABLE:
-        try:
-            memory = SuperAppMemory()
-            stats = memory.get_stats()
-            
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.metric("Cache Hits", stats.get("cache_hits", 0))
-            
-            with col2:
-                st.metric("Cache Misses", stats.get("cache_misses", 0))
-            
-            with col3:
-                cache_rate = 0
-                total = stats.get("cache_hits", 0) + stats.get("cache_misses", 0)
-                if total > 0:
-                    cache_rate = (stats.get("cache_hits", 0) / total) * 100
-                st.metric("Cache Hit Rate", f"{cache_rate:.1f}%")
-            
-            st.markdown("---")
-            st.success("💪 Muscle Memory is actively learning and optimizing your workflows!")
-            
-        except Exception as e:
-            st.error(f"Error accessing Muscle Memory: {e}")
-    else:
+    # Try to import and use Muscle Memory
+    try:
+        from superapp_muscle_memory import SuperAppMemory
+        memory = SuperAppMemory()
+        stats = memory.get_stats()
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric("Cache Hits", stats.get("cache_hits", 0))
+        
+        with col2:
+            st.metric("Cache Misses", stats.get("cache_misses", 0))
+        
+        with col3:
+            cache_rate = 0
+            total = stats.get("cache_hits", 0) + stats.get("cache_misses", 0)
+            if total > 0:
+                cache_rate = (stats.get("cache_hits", 0) / total) * 100
+            st.metric("Cache Hit Rate", f"{cache_rate:.1f}%")
+        
+        st.markdown("---")
+        st.success("💪 Muscle Memory is actively learning and optimizing your workflows!")
+        
+    except Exception as e:
         st.warning("🔧 Muscle Memory system not available")
-        st.info("Install requirements and run setup to enable behavior caching")
+        st.info(f"Error: {str(e)[:200]}")
+        st.info("The dashboard works in basic mode without Muscle Memory!")
+        
+        # Show some placeholder metrics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Cache Hits", "Coming Soon")
+        with col2:
+            st.metric("Cache Misses", "Coming Soon") 
+        with col3:
+            st.metric("Cache Hit Rate", "Coming Soon")
 
 def render_verticals_page():
     """Render business verticals progress"""
