@@ -220,7 +220,7 @@ def render_sidebar():
     st.sidebar.metric("Active TODOs", len(data["active_todos"]))
     st.sidebar.metric("Completed Features", len(data["completed_features"]))
     
-    return pages[selected_page]
+    return selected_page
 
 def render_overview_page():
     """Render the main project overview page"""
