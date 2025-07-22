@@ -24,12 +24,14 @@ OPENAI_AVAILABLE = False
 try:
     import anthropic
     ANTHROPIC_AVAILABLE = True
+    print("✅ Anthropic imported successfully")
 except ImportError:
     print("🔧 Anthropic not available - using fallback responses")
 
 try:
     import openai  
     OPENAI_AVAILABLE = True
+    print("✅ OpenAI imported successfully")
 except ImportError:
     print("🔧 OpenAI not available - using fallback responses")
 
