@@ -391,11 +391,7 @@ def render_ai_assistant_page():
     anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
     openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
     
-    # Debug API key status (show only first few characters for security)
-    if anthropic_key:
-        st.write(f"🔑 Anthropic API Key: {anthropic_key[:8]}..." if len(anthropic_key) > 8 else "🔑 Anthropic API Key: [short key]")
-    if openai_key:
-        st.write(f"🔑 OpenAI API Key: {openai_key[:8]}..." if len(openai_key) > 8 else "🔑 OpenAI API Key: [short key]")
+    # API keys loaded - no need to display them
     
     if anthropic_key or openai_key:
         ai_status = "🤖 **FULL AI MODE ACTIVE**" 
@@ -412,38 +408,37 @@ def render_ai_assistant_page():
     st.markdown("💡 **Collaboration Focus**: This AI is here to help the ENTIRE team succeed together!")
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # API Key configuration (expandable)
-    with st.expander("🔑 Configure AI (Optional)"):
-        st.markdown("**To activate full AI capabilities:**")
-        st.markdown("1. Get an API key from [Anthropic](https://console.anthropic.com/) or [OpenAI](https://platform.openai.com/)")
-        st.markdown("2. Add to Streamlit secrets or environment variables:")
-        st.code("ANTHROPIC_API_KEY=your_key_here")
-        st.markdown("3. Restart the dashboard")
-        st.markdown("**Current status**: Working in basic mode with project-aware responses!")
+    # No need for configuration section - keys are already set up
     
     # Chat interface
+    st.markdown("---")
+    
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {"role": "assistant", "content": "Hi! I'm your SuperApp AI assistant. I know everything about your project - roles, architecture, progress, and goals. How can I help the team today?"}
         ]
     
-    # Display chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    # Display chat messages in a container
+    chat_container = st.container()
+    with chat_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
     
     # Chat input
     if prompt := st.chat_input("Ask me anything about the SuperApp project..."):
-        # Add user message
+        # Add user message to session
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
         
-        # Generate AI response (simulated for now)
+        # Generate and add AI response
         with st.chat_message("assistant"):
-            response = generate_ai_response(prompt)
+            with st.spinner("Thinking..."):
+                response = generate_ai_response(prompt)
             st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        
+        # Rerun to show the new messages in the chat history
+        st.rerun()
     
     # Quick action buttons
     st.markdown("---")
