@@ -365,7 +365,7 @@ def render_overview_page():
 def render_ai_assistant_page():
     """Render the AI assistant page"""
     st.markdown("# SuperApp AI Assistant")
-    st.markdown("### Your intelligent project companion!")
+    st.markdown("### Your intelligent project companion! 🚀")
     
     # Check AI availability
     anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
