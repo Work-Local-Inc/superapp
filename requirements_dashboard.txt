@@ -1,15 +1,7 @@
-# SuperApp Dashboard Dependencies
+# SuperApp Dashboard Dependencies - MINIMAL for Streamlit Cloud
 streamlit>=1.47.0
 plotly>=6.2.0
 pandas>=2.3.1
 muscle-mem>=0.1.0
 python-dotenv>=1.1.1
-requests>=2.32.4
-
-# AI Integration
-anthropic>=0.58.2
-openai>=1.97.1
-
-# Optional for enhanced features
-psutil>=7.0.0
-gitpython>=3.1.44 
+requests>=2.32.4 

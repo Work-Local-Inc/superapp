@@ -17,18 +17,21 @@ import time
 import subprocess
 import sys
 
-# AI Integration
+# AI Integration - Optional imports for Streamlit Cloud
+ANTHROPIC_AVAILABLE = False
+OPENAI_AVAILABLE = False
+
 try:
     import anthropic
     ANTHROPIC_AVAILABLE = True
 except ImportError:
-    ANTHROPIC_AVAILABLE = False
+    print("🔧 Anthropic not available - using fallback responses")
 
 try:
-    import openai
+    import openai  
     OPENAI_AVAILABLE = True
 except ImportError:
-    OPENAI_AVAILABLE = False
+    print("🔧 OpenAI not available - using fallback responses")
 
 # Muscle Memory will be imported when needed
 MUSCLE_MEMORY_AVAILABLE = False
@@ -703,19 +706,31 @@ def render_muscle_memory_page():
         st.markdown("---")
         st.success("💪 Muscle Memory is actively learning and optimizing your workflows!")
         
-    except Exception as e:
-        st.warning("🔧 Muscle Memory system not available")
-        st.info(f"Error: {str(e)[:200]}")
-        st.info("The dashboard works in basic mode without Muscle Memory!")
+    except ImportError as e:
+        st.warning("🔧 Muscle Memory system loading...")
+        st.info("Dashboard works in basic mode while muscle-mem package initializes")
         
         # Show some placeholder metrics
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Cache Hits", "Coming Soon")
+            st.metric("Cache Hits", "Loading...")
         with col2:
-            st.metric("Cache Misses", "Coming Soon") 
+            st.metric("Cache Misses", "Loading...") 
         with col3:
-            st.metric("Cache Hit Rate", "Coming Soon")
+            st.metric("Cache Hit Rate", "Loading...")
+            
+    except Exception as e:
+        st.error("🚨 Muscle Memory initialization error")
+        st.code(f"Error: {str(e)}")
+        
+        # Show some placeholder metrics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Cache Hits", "Error")
+        with col2:
+            st.metric("Cache Misses", "Error") 
+        with col3:
+            st.metric("Cache Hit Rate", "Error")
 
 def render_verticals_page():
     """Render business verticals progress"""
