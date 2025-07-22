@@ -123,6 +123,7 @@ def render_sidebar():
     # Navigation
     pages = {
         "🏠 Project Overview": "overview",
+        "🛣️ Project Roadmap": "roadmap",
         "🤖 AI Assistant": "ai_assistant", 
         "🎭 Role Tracker": "roles",
         "💪 Muscle Memory": "muscle_memory",
@@ -629,6 +630,223 @@ def render_verticals_page():
                 st.markdown("**Next Priority:**")
                 st.info(info['next'])
 
+def render_roadmap_page():
+    """Render the project roadmap from SUPERAPP_CONTEXT.md"""
+    st.markdown("# 🛣️ SuperApp Project Roadmap")
+    st.markdown("### Strategic development timeline and priorities")
+    
+    # Read current status from context file
+    current_phase = "Initialization"
+    try:
+        if Path("SUPERAPP_CONTEXT.md").exists():
+            with open("SUPERAPP_CONTEXT.md", 'r') as f:
+                content = f.read()
+                if "initialization" in content.lower():
+                    current_phase = "🎯 Initialization"
+                elif "mvp" in content.lower():
+                    current_phase = "🚀 MVP Development"
+    except:
+        pass
+    
+    st.info(f"**Current Phase**: {current_phase}")
+    
+    # Phase timeline
+    phases = [
+        {
+            "phase": "🎯 Phase 1: Foundation",
+            "status": "✅ Complete",
+            "duration": "Week 1-2",
+            "progress": 100,
+            "items": [
+                "✅ Project architecture defined",
+                "✅ Role system designed", 
+                "✅ Entity structure (Account/Business/User)",
+                "✅ Tech stack confirmed (Laravel + AI)",
+                "✅ Documentation & memory bank created"
+            ]
+        },
+        {
+            "phase": "🚀 Phase 2: Backend Core",
+            "status": "🔄 In Progress",
+            "duration": "Week 3-6", 
+            "progress": 45,
+            "items": [
+                "🔄 Laravel backend initialization",
+                "🔄 Role system implementation",
+                "🔄 Database schema & migrations",
+                "⏳ API endpoints for core functions",
+                "⏳ Authentication & authorization"
+            ]
+        },
+        {
+            "phase": "🍕 Phase 3: Food Vertical MVP",
+            "status": "⏳ Planned",
+            "duration": "Week 7-10",
+            "progress": 0,
+            "items": [
+                "⏳ Menu management system",
+                "⏳ Order processing workflow",
+                "⏳ Payment integration (Stripe)",
+                "⏳ Commission tracking",
+                "⏳ Basic admin dashboard"
+            ]
+        },
+        {
+            "phase": "🏢 Phase 4: Multi-Tenant Scale",
+            "status": "🎯 Future",
+            "duration": "Week 11-14",
+            "progress": 0,
+            "items": [
+                "⏳ Multiple business support",
+                "⏳ Community organization features", 
+                "⏳ Advanced role permissions",
+                "⏳ Performance optimization",
+                "⏳ Mobile app foundation"
+            ]
+        }
+    ]
+    
+    # Render each phase
+    for phase in phases:
+        with st.expander(f"{phase['phase']} - {phase['status']} ({phase['duration']})"):
+            # Progress bar
+            st.progress(phase['progress'] / 100)
+            st.caption(f"{phase['progress']}% Complete")
+            
+            # Items
+            for item in phase['items']:
+                if item.startswith("✅"):
+                    st.success(item)
+                elif item.startswith("🔄"):
+                    st.info(item)
+                else:
+                    st.warning(item)
+    
+    # Business verticals roadmap
+    st.markdown("---")
+    st.markdown("### 🏢 Business Verticals Roadmap")
+    
+    verticals_timeline = {
+        "🍕 Food Services": {
+            "launch": "Q1 2024",
+            "status": "🔄 MVP Development",
+            "features": ["Online ordering", "Menu management", "Payment processing"],
+            "revenue_target": "$10k/month by month 3"
+        },
+        "💆 Spa/Wellness": {
+            "launch": "Q2 2024", 
+            "status": "📋 Planned",
+            "features": ["Booking system", "Service management", "Client profiles"],
+            "revenue_target": "$15k/month by month 6"
+        },
+        "🏋️ Fitness/Gym": {
+            "launch": "Q3 2024",
+            "status": "🎯 Research",
+            "features": ["Membership management", "Class booking", "Trainer scheduling"],
+            "revenue_target": "$20k/month by month 9"
+        },
+        "🔧 Trade Services": {
+            "launch": "Q4 2024",
+            "status": "💡 Concept",
+            "features": ["Quote management", "Job scheduling", "Inventory tracking"],
+            "revenue_target": "$25k/month by month 12"
+        }
+    }
+    
+    for vertical, info in verticals_timeline.items():
+        col1, col2, col3 = st.columns([2, 1, 2])
+        
+        with col1:
+            st.markdown(f"### {vertical}")
+            st.markdown(f"**Status**: {info['status']}")
+            st.markdown(f"**Launch**: {info['launch']}")
+        
+        with col2:
+            # Status indicator
+            if "Development" in info['status']:
+                st.success("🚀 Active")
+            elif "Planned" in info['status']:
+                st.info("📋 Ready")
+            elif "Research" in info['status']:
+                st.warning("🔍 Research")
+            else:
+                st.error("💡 Concept")
+        
+        with col3:
+            st.markdown("**Key Features**:")
+            for feature in info['features']:
+                st.markdown(f"• {feature}")
+            st.markdown(f"**Target**: {info['revenue_target']}")
+    
+    # Critical path & dependencies
+    st.markdown("---")
+    st.markdown("### ⚡ Critical Path & Dependencies")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 🚨 Blockers & Dependencies")
+        blockers = [
+            "Laravel backend completion → Food vertical development",
+            "Role system implementation → Multi-tenant features",
+            "Payment integration → Commission tracking",
+            "Mobile app foundation → iOS/Android deployment"
+        ]
+        
+        for blocker in blockers:
+            st.warning(f"⚠️ {blocker}")
+    
+    with col2:
+        st.markdown("#### 🎯 Success Milestones")
+        milestones = [
+            "First food order processed (Week 8)",
+            "10 businesses onboarded (Week 12)",
+            "Break-even revenue achieved (Week 16)",
+            "Multi-vertical platform ready (Week 20)"
+        ]
+        
+        for milestone in milestones:
+            st.info(f"🎯 {milestone}")
+    
+    # Team allocation
+    st.markdown("---")
+    st.markdown("### 👥 Team Allocation & Responsibilities")
+    
+    team_roadmap = {
+        "James Walker": {
+            "role": "Project Lead & Strategy",
+            "current": "Stakeholder coordination, product vision",
+            "next": "Business development, partnership strategy"
+        },
+        "Nick Denysov": {
+            "role": "Backend Lead", 
+            "current": "Laravel API development, role system",
+            "next": "Food vertical implementation, database optimization"
+        },
+        "Pavel": {
+            "role": "Full-Stack Developer",
+            "current": "Supporting backend development",
+            "next": "Frontend integration, mobile app foundation"
+        },
+        "Brian": {
+            "role": "Optimization & Performance",
+            "current": "Project management dashboard, Muscle Memory",
+            "next": "Performance monitoring, AI workflow optimization"
+        }
+    }
+    
+    for member, info in team_roadmap.items():
+        with st.expander(f"👤 {member} - {info['role']}"):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**Current Focus**:")
+                st.info(info['current'])
+            
+            with col2:
+                st.markdown("**Next Phase**:")
+                st.success(info['next'])
+
 def render_optimization_page():
     """Render optimization tracking"""
     st.markdown("# 📊 Optimization Dashboard")
@@ -675,6 +893,8 @@ def main():
     # Render the selected page
     if selected_page == "overview":
         render_overview_page()
+    elif selected_page == "roadmap":
+        render_roadmap_page()
     elif selected_page == "ai_assistant":
         render_ai_assistant_page()
     elif selected_page == "roles":
