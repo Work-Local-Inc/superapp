@@ -385,30 +385,34 @@ def render_overview_page():
 def render_ai_assistant_page():
     """Render the AI assistant page"""
     st.markdown("# SuperApp AI Assistant")
-    st.markdown("### Your intelligent project companion!")
     
-    # Check AI availability
+    # Check AI availability (silent)
     anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
     openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
     
-    # API keys loaded - no need to display them
+    # Quick Questions at the top
+    st.markdown("### Quick Questions")
     
-    if anthropic_key or openai_key:
-        ai_status = "🤖 **FULL AI MODE ACTIVE**" 
-        if anthropic_key:
-            ai_status += " (Claude)"
-        elif openai_key:
-            ai_status += " (GPT-4)"
-    else:
-        ai_status = "🔧 **BASIC MODE** - Add API key for full AI capabilities"
+    col1, col2, col3 = st.columns(3)
     
-    st.info(ai_status)
+    with col1:
+        if st.button("📊 Generate Status Report", use_container_width=True):
+            report = generate_status_report()
+            st.text_area("Status Report", report, height=200)
     
-    st.markdown('<div class="collaboration-focus">', unsafe_allow_html=True)
-    st.markdown("💡 **Collaboration Focus**: This AI is here to help the ENTIRE team succeed together!")
-    st.markdown('</div>', unsafe_allow_html=True)
+    with col2:
+        if st.button("🎯 Suggest Next Tasks", use_container_width=True):
+            tasks = suggest_next_tasks()
+            st.markdown("#### Suggested Next Tasks:")
+            for task in tasks:
+                st.info(f"• {task}")
     
-    # No need for configuration section - keys are already set up
+    with col3:
+        if st.button("🔍 Identify Optimization Opportunities", use_container_width=True):
+            opportunities = identify_optimizations()
+            st.markdown("#### Optimization Opportunities:")
+            for opp in opportunities:
+                st.warning(f"• {opp}")
     
     # Chat interface
     st.markdown("---")
@@ -440,30 +444,7 @@ def render_ai_assistant_page():
         # Rerun to show the new messages in the chat history
         st.rerun()
     
-    # Quick action buttons
-    st.markdown("---")
-    st.markdown("### Quick Actions")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("📊 Generate Status Report"):
-            report = generate_status_report()
-            st.text_area("Status Report", report, height=200)
-    
-    with col2:
-        if st.button("🎯 Suggest Next Tasks"):
-            tasks = suggest_next_tasks()
-            st.markdown("#### Suggested Next Tasks:")
-            for task in tasks:
-                st.info(f"• {task}")
-    
-    with col3:
-        if st.button("🔍 Identify Optimization Opportunities"):
-            opportunities = identify_optimizations()
-            st.markdown("#### Optimization Opportunities:")
-            for opp in opportunities:
-                st.warning(f"• {opp}")
+    # Clean end of chat interface
 
 def get_project_context():
     """Get comprehensive project context for AI"""
@@ -1074,12 +1055,7 @@ def main():
     elif selected_page == "optimization":
         render_optimization_page()
     
-    # Footer
-    st.markdown("---")
-    st.markdown("### 🤝 Team Collaboration Focus")
-    st.markdown('<div class="collaboration-focus">', unsafe_allow_html=True)
-    st.markdown("**Remember**: We're all in this together! This dashboard celebrates collective success and supports everyone's growth. No competition, just collaboration! 💪🚀")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Clean footer - no clutter needed
 
 if __name__ == "__main__":
     main() 
