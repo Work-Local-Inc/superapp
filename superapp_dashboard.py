@@ -641,7 +641,7 @@ def render_role_tracker_page():
     
     # Business type progress
     st.markdown("---")
-    st.markdown("### 🏢 Business Type Implementation")
+    st.markdown("### Business Type Implementation")
     
     for business, progress in data["role_progress"].items():
         st.markdown(f"#### {business.title()} Business")
@@ -674,10 +674,10 @@ def render_muscle_memory_page():
             st.metric("Cache Hit Rate", f"{cache_rate:.1f}%")
         
         st.markdown("---")
-        st.success("💪 Muscle Memory is actively learning and optimizing your workflows!")
+        st.success("Muscle Memory is actively learning and optimizing your workflows!")
         
     except ImportError as e:
-        st.warning("🔧 Muscle Memory system loading...")
+        st.warning("Muscle Memory system loading...")
         st.info("Dashboard works in basic mode while muscle-mem package initializes")
         
         # Show some placeholder metrics
@@ -709,24 +709,24 @@ def render_verticals_page():
     data = load_project_data()
     
     verticals = {
-        "🍕 Food Service": {
+        "Food Service": {
             "progress": 85,
-            "features": ["Menu Management ✅", "Order Processing 🔄", "Payment Integration ⏳"],
+            "features": ["Menu Management", "Order Processing", "Payment Integration"],
             "next": "Complete order workflow and commission tracking"
         },
-        "💆 Spa/Wellness": {
+        "Spa/Wellness": {
             "progress": 20,
-            "features": ["Booking System ⏳", "Service Management ⏳", "Client Tracking ⏳"],
+            "features": ["Booking System", "Service Management", "Client Tracking"],
             "next": "Plan booking system architecture"
         },
-        "🏋️ Gym/Fitness": {
+        "Gym/Fitness": {
             "progress": 10,
-            "features": ["Membership Management ⏳", "Class Booking ⏳", "Equipment Tracking ⏳"],
+            "features": ["Membership Management", "Class Booking", "Equipment Tracking"],
             "next": "Define membership tier structure"
         },
-        "🔧 Trade Business": {
+        "Trade Business": {
             "progress": 5,
-            "features": ["Quote Management ⏳", "Job Scheduling ⏳", "Inventory Tracking ⏳"],
+            "features": ["Quote Management", "Job Scheduling", "Inventory Tracking"],
             "next": "Research trade business workflows"
         }
     }
