@@ -1,0 +1,11 @@
+# SuperApp Dashboard Dependencies
+streamlit>=1.47.0
+plotly>=5.17.0
+pandas>=2.0.0
+muscle-mem>=0.1.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Optional for enhanced features
+psutil>=5.9.0
+gitpython>=3.1.0 
