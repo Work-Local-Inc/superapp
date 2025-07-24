@@ -99,6 +99,43 @@ st.markdown("""
         border-top: 2px solid #E1E5E9;
         margin: 2rem 0 1rem 0;
     }
+    .activity-card {
+        background: white;
+        border: 1px solid #E1E5E9;
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .activity-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .activity-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .activity-icon {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+    .activity-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+    .activity-meta {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    .activity-description {
+        color: #4b5563;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
     /* Better spacing and readability */
     .stMetric {
         background-color: #FFFFFF;
@@ -148,7 +185,54 @@ def load_project_data():
                 "features": ["Account Signup", "Account Invitations", "Invites Management", "Members Management", "Permissions System"],
                 "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions"
             }
-        }
+        },
+        "recent_activity": [
+            {
+                "title": "Clients Hub Repository Initialized",
+                "description": "Nick set up the account management backend repository",
+                "timestamp": "2 hours ago",
+                "author": "Nick Denysov",
+                "type": "repo",
+                "link": "https://github.com/Shared-Concepts/clients-hub",
+                "icon": "🚀"
+            },
+            {
+                "title": "Account Signup System Complete",
+                "description": "Successfully implemented user registration flow",
+                "timestamp": "Yesterday",
+                "author": "Nick Denysov", 
+                "type": "feature",
+                "link": None,
+                "icon": "✅"
+            },
+            {
+                "title": "Account Invitations Feature Deployed",
+                "description": "Email invitation system ready for testing",
+                "timestamp": "Yesterday",
+                "author": "Nick Denysov",
+                "type": "feature", 
+                "link": None,
+                "icon": "📧"
+            },
+            {
+                "title": "Permissions Wiki Created",
+                "description": "Comprehensive permissions table documented",
+                "timestamp": "Today",
+                "author": "Nick Denysov",
+                "type": "docs",
+                "link": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions",
+                "icon": "📖"
+            },
+            {
+                "title": "Dashboard Updated with Repository Links",
+                "description": "Added project repository tracking and context",
+                "timestamp": "Just now",
+                "author": "Brian",
+                "type": "dashboard",
+                "link": None,
+                "icon": "📊"
+            }
+        ]
     }
     
     # Try to load real data
@@ -333,6 +417,36 @@ def render_overview_page():
             active = data["active_todos"] or ["Laravel backend implementation", "Food vertical development", "API endpoint creation"]
             for todo in active:
                 st.info(f"• {todo}")
+    
+    # Recent Activity Section
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+    st.markdown("### Recent Activity")
+    
+    recent_activity = data.get("recent_activity", [])
+    
+    # Show recent activity in a clean feed
+    col1, col2 = st.columns(2)
+    
+    for i, activity in enumerate(recent_activity[:6]):  # Show max 6 recent items
+        with col1 if i % 2 == 0 else col2:
+            # Create activity card
+            card_html = f"""
+            <div class="activity-card">
+                <div class="activity-header">
+                    <span class="activity-icon">{activity['icon']}</span>
+                    <h4 class="activity-title">{activity['title']}</h4>
+                </div>
+                <p class="activity-description">{activity['description']}</p>
+                <div class="activity-meta">
+                    {activity['author']} • {activity['timestamp']}
+                </div>
+            </div>
+            """
+            st.markdown(card_html, unsafe_allow_html=True)
+            
+            # Add link button if available
+            if activity.get('link'):
+                st.markdown(f"🔗 [View →]({activity['link']})")
     
     # Project Repositories Section
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
