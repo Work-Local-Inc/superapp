@@ -37,8 +37,18 @@
     },
     {
       "id": "role_permissions",
-      "content": "Code role-based permission system",
+      "content": "Code role-based permission system - Nick implementing permissions after completing Invites/Members management",
       "status": "in_progress"
+    },
+    {
+      "id": "account_invitations",
+      "content": "Account signup and invitation system - completed by Nick",
+      "status": "completed"
+    },
+    {
+      "id": "jordan_repo_access",
+      "content": "Add Jordan to clients-hub repo access for Wiki permissions table",
+      "status": "pending"
     }
   ],
   "last_updated": "2025-01-22T15:30:00Z"

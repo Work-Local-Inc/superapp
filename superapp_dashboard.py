@@ -138,6 +138,23 @@ def load_project_data():
             "spa": 20,
             "gym": 10,
             "trade": 5
+        },
+        "repositories": {
+            "clients-hub": {
+                "url": "https://github.com/Shared-Concepts/clients-hub",
+                "description": "Account management and client hub backend",
+                "status": "Active Development",
+                "lead": "Nick Denysov",
+                "features": ["Account Signup", "Account Invitations", "Invites Management", "Members Management", "Permissions System"],
+                "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions"
+            },
+            "superapp": {
+                "url": "https://github.com/Work-Local-Inc/superapp",
+                "description": "Main SuperApp platform and dashboard",
+                "status": "Dashboard Live",
+                "lead": "Brian",
+                "features": ["Command Center Dashboard", "AI Assistant", "Role Tracking", "Progress Visualization"]
+            }
         }
     }
     
@@ -324,6 +341,36 @@ def render_overview_page():
             for todo in active:
                 st.info(f"• {todo}")
     
+    # Project Repositories Section
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+    st.markdown("### Project Repositories")
+    
+    repositories = data.get("repositories", {})
+    
+    col1, col2 = st.columns(2)
+    
+    for i, (repo_name, repo_info) in enumerate(repositories.items()):
+        with col1 if i % 2 == 0 else col2:
+            with st.container():
+                st.markdown(f"#### {repo_name}")
+                st.markdown(f"**Lead**: {repo_info['lead']}")
+                st.markdown(f"**Status**: {repo_info['status']}")
+                st.markdown(f"**Description**: {repo_info['description']}")
+                
+                # Repository link
+                st.markdown(f"🔗 [View Repository]({repo_info['url']})")
+                
+                # Wiki link if available
+                if 'wiki' in repo_info:
+                    st.markdown(f"📖 [Permissions Wiki]({repo_info['wiki']})")
+                
+                # Features
+                st.markdown("**Recent Features**:")
+                for feature in repo_info['features']:
+                    st.markdown(f"• {feature}")
+                
+                st.markdown("---")
+    
     # Clean end of overview page
 
 def render_ai_assistant_page():
@@ -406,6 +453,17 @@ SUPERAPP PROJECT OVERVIEW:
 - Active TODOs: {len(data['active_todos'])}
 - Completed Features: {len(data['completed_features'])}
 """)
+    
+    # Repository information
+    repositories = data.get("repositories", {})
+    if repositories:
+        repo_context = "ACTIVE REPOSITORIES:\n"
+        for repo_name, repo_info in repositories.items():
+            repo_context += f"- {repo_name}: {repo_info['description']} (Lead: {repo_info['lead']}, Status: {repo_info['status']})\n"
+            if repo_name == "clients-hub":
+                repo_context += f"  * Recent work: Account Signup ✅, Account Invitations ✅, Invites/Members Management 🔄, Permissions System 📋\n"
+                repo_context += f"  * Wiki: {repo_info.get('wiki', 'N/A')}\n"
+        context_parts.append(repo_context)
     
     # Try to read context files
     try:
