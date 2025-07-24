@@ -334,7 +334,37 @@ def render_overview_page():
     
     data = load_project_data()
     
+    # Recent Activity Section - TOP PRIORITY for team engagement
+    st.markdown("### Recent Activity")
+    
+    recent_activity = data.get("recent_activity", [])
+    
+    # Show recent activity in a clean feed
+    col1, col2 = st.columns(2)
+    
+    for i, activity in enumerate(recent_activity[:6]):  # Show max 6 recent items
+        with col1 if i % 2 == 0 else col2:
+            # Create activity card
+            card_html = f"""
+            <div class="activity-card">
+                <div class="activity-header">
+                    <span class="activity-icon">{activity['icon']}</span>
+                    <h4 class="activity-title">{activity['title']}</h4>
+                </div>
+                <p class="activity-description">{activity['description']}</p>
+                <div class="activity-meta">
+                    {activity['author']} • {activity['timestamp']}
+                </div>
+            </div>
+            """
+            st.markdown(card_html, unsafe_allow_html=True)
+            
+            # Add link button if available
+            if activity.get('link'):
+                st.markdown(f"🔗 [View →]({activity['link']})")
+    
     # Main metrics row - with better visual hierarchy
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     st.markdown("### Project Status")
     col1, col2, col3 = st.columns(3)
     
@@ -417,36 +447,6 @@ def render_overview_page():
             active = data["active_todos"] or ["Laravel backend implementation", "Food vertical development", "API endpoint creation"]
             for todo in active:
                 st.info(f"• {todo}")
-    
-    # Recent Activity Section
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
-    st.markdown("### Recent Activity")
-    
-    recent_activity = data.get("recent_activity", [])
-    
-    # Show recent activity in a clean feed
-    col1, col2 = st.columns(2)
-    
-    for i, activity in enumerate(recent_activity[:6]):  # Show max 6 recent items
-        with col1 if i % 2 == 0 else col2:
-            # Create activity card
-            card_html = f"""
-            <div class="activity-card">
-                <div class="activity-header">
-                    <span class="activity-icon">{activity['icon']}</span>
-                    <h4 class="activity-title">{activity['title']}</h4>
-                </div>
-                <p class="activity-description">{activity['description']}</p>
-                <div class="activity-meta">
-                    {activity['author']} • {activity['timestamp']}
-                </div>
-            </div>
-            """
-            st.markdown(card_html, unsafe_allow_html=True)
-            
-            # Add link button if available
-            if activity.get('link'):
-                st.markdown(f"🔗 [View →]({activity['link']})")
     
     # Project Repositories Section
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
