@@ -147,13 +147,6 @@ def load_project_data():
                 "lead": "Nick Denysov",
                 "features": ["Account Signup", "Account Invitations", "Invites Management", "Members Management", "Permissions System"],
                 "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions"
-            },
-            "superapp": {
-                "url": "https://github.com/Work-Local-Inc/superapp",
-                "description": "Main SuperApp platform and dashboard",
-                "status": "Dashboard Live",
-                "lead": "Brian",
-                "features": ["Command Center Dashboard", "AI Assistant", "Role Tracking", "Progress Visualization"]
             }
         }
     }
