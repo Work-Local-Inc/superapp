@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 """
-Card Components - Beautiful UI Elements for Our Social Feed
-"""
+Card Components - Beautiful UI Elements for Our Documentation Dashboard
 
-from typing import Dict, List, Optional
+Monday Madness Implementation - Clean and Professional!
+"""
 
 # Optional Streamlit import for testing
 try:
@@ -22,14 +23,17 @@ except ImportError:
         def metric(self, label, value): pass
         def __enter__(self): return self
         def __exit__(self, *args): pass
-    
+
     st = MockStreamlit()
+
+from typing import Dict, List, Optional
+from datetime import datetime
 
 class WikiCard:
     """
-    🎴 Base wiki card component for social feed display
+    🎴 Base wiki card component for documentation display
     
-    Monday Madness Level: STYLISH! ✨
+    Monday Madness Level: BEAUTIFUL! 🎨
     """
     
     def __init__(self, card_data: Dict):
@@ -38,32 +42,37 @@ class WikiCard:
         
     def render(self) -> None:
         """
-        🎨 Render the card in Streamlit with compact design
+        🎨 Render the card in Streamlit with beautiful card styling
         """
+        # Create the beautiful card container with CSS styling
         with st.container():
-            # Compact card header with badge
-            col1, col2 = st.columns([3, 1])
-            
-            with col1:
-                st.markdown(f"### {self.data.get('icon', '📄')} {self.data.get('title', 'Untitled')}")
-            
-            with col2:
-                priority = self.data.get('priority', 'low')
-                priority_emoji = {"high": "🔥", "medium": "⚡", "low": "📄"}.get(priority, "📄")
-                st.markdown(f"**{priority_emoji} {priority.title()}**")
-            
-            # Card summary
-            summary = self.data.get('summary', 'No summary available')
-            st.markdown(f"*{summary}*")
-            
-            # Inline stats in a compact row
+            # Get the data we need for inside the card
             features_count = len(self.data.get('features', []))
             engagement = self.data.get('engagement_score', 0)
             read_time = self.data.get('content_stats', {}).get('read_time', 'Unknown')
             
-            st.markdown(f"📚 **{features_count} features** • ⚡ **{engagement}/100** • ⏱️ **{read_time}**")
+            st.markdown(f"""
+            <div class="{self.data.get('style_class', 'wiki-card')}">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">{self.data.get('icon', '📄')}</span>
+                        <h3>{self.data.get('title', 'Untitled')}</h3>
+                    </div>
+                    <div class="card-meta">
+                        <span class="card-priority priority-{self.data.get('priority', 'low')}">{self.data.get('priority', 'low').title()}</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p class="card-summary">{self.data.get('summary', 'No summary available')}</p>
+                    <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e5e7eb;">
+                    <div class="card-stats">
+                        <p>📚 <strong>{features_count} features</strong> • ⚡ <strong>{engagement}/100</strong> • ⏱️ <strong>{read_time}</strong></p>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
-            # Single action button for full view
+            # Action buttons still need to be outside for Streamlit functionality
             col1, col2 = st.columns(2)
             
             with col1:
@@ -76,7 +85,7 @@ class WikiCard:
                 if st.button("🔗 Wiki Link", 
                            key=f"wiki_{self.data.get('id', 'card')}", 
                            use_container_width=True):
-                                         st.info("📝 Would open wiki page in new tab")
+                    st.info("📝 Would open wiki page in new tab")
     
     def _show_full_content(self):
         """
@@ -138,23 +147,9 @@ class ExpandableCard(WikiCard):
         super().__init__(card_data)
         self.expanded = default_expanded
         
-    def render_collapsed(self) -> None:
+    def toggle_expanded(self) -> None:
         """
-        📋 Render collapsed state with summary
-        """
-        # TODO: Beautiful collapsed view
-        pass
-        
-    def render_expanded(self) -> None:
-        """
-        📖 Render full expanded content
-        """
-        # TODO: Rich expanded content
-        pass
-        
-    def toggle_expansion(self) -> None:
-        """
-        🔄 Toggle between collapsed and expanded states
+        🔄 Toggle card expansion state
         """
         self.expanded = not self.expanded
 

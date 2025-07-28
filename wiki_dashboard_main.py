@@ -137,25 +137,15 @@ def render_wiki_feed(feed_generator):
         st.warning("📄 No wiki content found. Make sure the wiki repository is cloned and contains markdown files.")
         return
     
-    # Display cards in a responsive grid layout
-    cards_per_row = 3  # Can be 2 or 3 depending on preference
-    
-    # Group cards into rows
-    for row_start in range(0, len(timeline), cards_per_row):
-        row_cards = timeline[row_start:row_start + cards_per_row]
-        
-        # Create columns for this row
-        cols = st.columns(len(row_cards))
-        
-        # Render each card in its column
-        for col_idx, card_data in enumerate(row_cards):
-            with cols[col_idx]:
-                wiki_card = WikiCard(card_data)
-                wiki_card.render()
-        
-        # Add spacing between rows
-        if row_start + cards_per_row < len(timeline):
-            st.markdown("<br>", unsafe_allow_html=True)
+    # Display cards in full-width rows with proper card styling
+    for i, card_data in enumerate(timeline):
+        with st.container():
+            wiki_card = WikiCard(card_data)
+            wiki_card.render()
+            
+            # Add some spacing between cards
+            if i < len(timeline) - 1:
+                st.markdown("<br>", unsafe_allow_html=True)
 
 def render_sidebar():
     """
