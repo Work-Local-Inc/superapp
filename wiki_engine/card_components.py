@@ -242,26 +242,26 @@ class StatsCard:
         """
         📊 Render stats in a beautiful format
         """
-        st.markdown("### 📊 Project Dashboard Stats")
+        st.markdown("### Project Dashboard Stats")
         
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("📚 Wiki Pages", self.stats.get("total_pages", 0))
+            st.metric("Wiki Pages", self.stats.get("total_pages", 0))
             
         with col2:
-            st.metric("⭐ Features", self.stats.get("total_features", 0))
+            st.metric("Features", self.stats.get("total_features", 0))
             
         with col3:
             last_updated = self.stats.get("last_updated", "Unknown")
             if isinstance(last_updated, str):
-                st.metric("🕐 Last Updated", "Today")
+                st.metric("Last Updated", "Today")
             else:
-                st.metric("🕐 Last Updated", last_updated.strftime("%m/%d"))
+                st.metric("Last Updated", last_updated.strftime("%m/%d"))
             
         with col4:
-            status = self.stats.get("status", "🔥 ALIVE!")
-            st.metric("💪 Status", status)
+            status = self.stats.get("status", "ALIVE!")
+            st.metric("Status", status)
         
         st.markdown("---")
 
