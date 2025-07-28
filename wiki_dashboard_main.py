@@ -67,26 +67,26 @@ def render_dashboard_header_section(feed_generator):
     """
     🔝 Render the beautiful dashboard header with roadmap and stats
     """
-    st.markdown("# 🚀 SuperApp Documentation Dashboard")
-    st.markdown("*Where wiki documentation becomes engaging and beautiful!* 🎪")
+    st.markdown("# SuperApp Documentation Dashboard")
+    st.markdown("*Where wiki documentation becomes engaging and beautiful*")
     
     # Dashboard sync status
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
-        st.markdown("**📚 Live Wiki Dashboard** - Powered by Git Repository")
+        st.markdown("**Live Wiki Dashboard** - Powered by Git Repository")
     
     with col2:
-        if st.button("🔄 Sync Wiki", help="Pull latest updates from Git"):
+        if st.button("Sync Wiki", help="Pull latest updates from Git"):
             sync_wiki_updates(st.session_state.git_sync)
             st.rerun()
     
     with col3:
         last_sync = getattr(st.session_state.git_sync, 'last_sync', None)
         if last_sync:
-            st.caption(f"🕐 Last sync: {last_sync.strftime('%H:%M')}")
+            st.caption(f"Last sync: {last_sync.strftime('%H:%M')}")
         else:
-            st.caption("🕐 Never synced")
+            st.caption("Never synced")
     
     st.markdown("---")
     
@@ -127,7 +127,7 @@ def render_wiki_feed(feed_generator):
         return
     
     # Normal feed view
-    st.markdown("## 📚 Documentation Feed")
+    st.markdown("## Documentation Feed")
     st.markdown("*Your team's wiki content, beautifully displayed*")
     
     # Generate the timeline of cards

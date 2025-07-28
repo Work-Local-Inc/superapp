@@ -51,35 +51,38 @@ class WikiCard:
             engagement = self.data.get('engagement_score', 0)
             read_time = self.data.get('content_stats', {}).get('read_time', 'Unknown')
             
-            # Simple, clean approach using Streamlit's built-in expander
-            with st.expander(f"{self.data.get('icon', '📄')} {self.data.get('title', 'Untitled')} ({self.data.get('priority', 'low').title()})", expanded=True):
+            # Clean, simple approach using Streamlit's built-in expander
+            priority = self.data.get('priority', 'low').title()
+            priority_indicator = "🔥" if priority == "High" else ""
+            
+            with st.expander(f"{self.data.get('title', 'Untitled')} {priority_indicator}", expanded=True):
                 
                 # Card summary
                 summary = self.data.get('summary', 'No summary available')
                 st.markdown(summary)
                 
-                # Stats in columns
+                # Stats in columns - clean metrics without emoji spam
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("📚 Features", features_count)
+                    st.metric("Features", features_count)
                 with col2:
-                    st.metric("⚡ Score", f"{self.data.get('engagement_score', 0)}/100")
+                    st.metric("Score", f"{self.data.get('engagement_score', 0)}/100")
                 with col3:
-                    st.metric("⏱️ Read Time", read_time)
+                    st.metric("Read Time", read_time)
                 
-                # Action buttons
+                # Action buttons - clean labels
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("📖 View Details", 
+                    if st.button("View Details", 
                                key=f"view_{self.data.get('id', 'card')}", 
                                use_container_width=True):
                         self._show_full_content()
                 
                 with col2:
-                    if st.button("🔗 Wiki Link", 
+                    if st.button("Wiki Link", 
                                key=f"wiki_{self.data.get('id', 'card')}", 
                                use_container_width=True):
-                        st.info("📝 Would open wiki page in new tab")
+                        st.info("Opens wiki page in new tab")
     
     def _show_full_content(self):
         """
