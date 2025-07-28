@@ -56,13 +56,21 @@ class WikiCard:
                 # Apply card styling to the entire container
                 st.markdown(f"""
                 <style>
-                .stContainer > div:last-child {{
-                    background: white;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 16px;
-                    padding: 1.5rem;
-                    margin: 1rem 0;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+                .stContainer > div {{
+                    background: white !important;
+                    border: 1px solid #e5e7eb !important;
+                    border-radius: 16px !important;
+                    padding: 1.5rem !important;
+                    margin: 1rem 0 !important;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07) !important;
+                }}
+                div[data-testid="stVerticalBlock"] > div {{
+                    background: white !important;
+                    border: 1px solid #e5e7eb !important;
+                    border-radius: 16px !important;
+                    padding: 1.5rem !important;
+                    margin: 1rem 0 !important;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07) !important;
                 }}
                 </style>
                 """, unsafe_allow_html=True)
