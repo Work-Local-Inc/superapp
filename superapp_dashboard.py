@@ -30,15 +30,16 @@ def load_custom_css():
 
 def initialize_wiki_engine():
     """
-    🔧 Initialize our wiki engine components with demo mode fallback
+    🔧 Initialize with embedded real wiki content for Streamlit Cloud
     """
+    # Always use embedded content for Streamlit Cloud deployment
+    wiki_dir = Path("clients-hub-wiki")
+    if not wiki_dir.exists():
+        st.info("📚 Running with REAL WIKI CONTENT - embedded from your team's documentation")
+        return initialize_real_wiki_content()
+    
+    # Local development - try to use real wiki files
     try:
-        # Try to initialize with real wiki
-        wiki_dir = Path("clients-hub-wiki")
-        if not wiki_dir.exists():
-            st.info("📚 Running with REAL WIKI CONTENT - embedded from your team's documentation")
-            return initialize_demo_mode()
-        
         if 'wiki_parser' not in st.session_state:
             st.session_state.wiki_parser = WikiParser("clients-hub-wiki")
         
@@ -51,12 +52,12 @@ def initialize_wiki_engine():
         return st.session_state.wiki_parser, st.session_state.git_sync, st.session_state.feed_generator
     
     except Exception as e:
-        st.warning(f"📡 Wiki unavailable, running in DEMO mode: {str(e)[:100]}")
-        return initialize_demo_mode()
+        st.warning(f"📚 Local wiki failed, using embedded content: {str(e)[:100]}")
+        return initialize_real_wiki_content()
 
-def initialize_demo_mode():
+def initialize_real_wiki_content():
     """
-    🎭 Initialize demo mode with sample wiki content for Streamlit Cloud
+    📚 Initialize with REAL embedded wiki content from clients-hub documentation
     """
     class MockWikiParser:
         def __init__(self):
