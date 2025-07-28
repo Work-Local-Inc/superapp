@@ -1,0 +1,343 @@
+/* 
+🎨 SuperApp Wiki Social Feed - Design System
+Monday Madness Implementation - Making Documentation BEAUTIFUL!
+*/
+
+/* ===== COLOR PALETTE ===== */
+:root {
+  --primary-blue: #3B82F6;
+  --success-green: #10B981;
+  --warning-orange: #F59E0B;
+  --error-red: #EF4444;
+  --neutral-gray: #6B7280;
+  --bg-light: #F9FAFB;
+  --card-bg: #FFFFFF;
+  --border-subtle: #E5E7EB;
+  
+  /* Monday Madness Special Colors */
+  --madness-purple: #8B5CF6;
+  --energy-yellow: #FDE047;
+  --alive-gradient: linear-gradient(135deg, var(--primary-blue), var(--madness-purple));
+}
+
+/* ===== SOCIAL FEED CARDS ===== */
+.wiki-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.wiki-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary-blue);
+}
+
+.wiki-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--alive-gradient);
+}
+
+/* ===== CARD HEADERS ===== */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-timestamp {
+  font-size: 0.875rem;
+  color: var(--neutral-gray);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ===== EXPANDABLE CONTENT ===== */
+.expandable-content {
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+}
+
+.content-preview {
+  color: #4B5563;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: var(--primary-blue);
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+}
+
+.expand-button:hover {
+  color: var(--madness-purple);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.action-button {
+  background: var(--bg-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-button:hover {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+  transform: translateY(-1px);
+}
+
+.action-button.primary {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
+}
+
+.action-button.primary:hover {
+  background: var(--madness-purple);
+  border-color: var(--madness-purple);
+}
+
+/* ===== ROADMAP SECTION ===== */
+.roadmap-header {
+  background: var(--alive-gradient);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.roadmap-phases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.phase-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.phase-progress {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.phase-progress-fill {
+  height: 100%;
+  background: var(--energy-yellow);
+  transition: width 0.3s ease;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Mobile: 320px - 768px */
+@media (max-width: 768px) {
+  .wiki-card {
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .card-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .roadmap-phases {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet: 768px - 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .wiki-card {
+    padding: 1.25rem;
+  }
+  
+  .roadmap-phases {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .feed-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .roadmap-phases {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.fade-in {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* ===== LOADING STATES ===== */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== MONDAY MADNESS SPECIAL EFFECTS ===== */
+.madness-glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.energy-pulse {
+  position: relative;
+}
+
+.energy-pulse::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--alive-gradient);
+  border-radius: inherit;
+  z-index: -1;
+  animation: pulse 2s infinite;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.wiki-content h1, .wiki-content h2, .wiki-content h3 {
+  color: #1F2937;
+  margin-bottom: 0.5rem;
+}
+
+.wiki-content p {
+  color: #4B5563;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.wiki-content ul, .wiki-content ol {
+  color: #4B5563;
+  padding-left: 1.5rem;
+}
+
+.wiki-content code {
+  background: var(--bg-light);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* ===== UTILITIES ===== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-4 { margin-top: 1rem; }
+.p-4 { padding: 1rem; }
+.rounded { border-radius: 8px; }
+.shadow { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+
+/* ===== STATUS INDICATORS ===== */
+.status-active { color: var(--success-green); }
+.status-pending { color: var(--warning-orange); }
+.status-complete { color: var(--primary-blue); }
+.status-error { color: var(--error-red); } 
