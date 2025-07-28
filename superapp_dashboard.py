@@ -1,1092 +1,242 @@
 #!/usr/bin/env python3
 """
-🚀 SuperApp Command Center Dashboard
-AI-powered project management and team coordination
-NO DRAMA - Just pure collaboration and progress tracking!
+🚀 SuperApp Wiki-Powered Dashboard - THE CLIMAX!
+Monday Madness Ultimate Implementation!
+
+Where Git Wiki documentation becomes a BEAUTIFUL dashboard experience!
 """
 
 import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
-import json
-import os
-from pathlib import Path
-import time
-
 import sys
+from pathlib import Path
+from datetime import datetime
 
-# AI Integration - Dynamic imports for Streamlit Cloud
-try:
-    import anthropic
-    ANTHROPIC_AVAILABLE = True
-    print("✅ Anthropic imported successfully")
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
-    print("🔧 Anthropic not available - using fallback responses")
+# Add our wiki engine to the path
+sys.path.append(str(Path(__file__).parent))
 
-try:
-    import openai  
-    OPENAI_AVAILABLE = True
-    print("✅ OpenAI imported successfully")
-except ImportError:
-    OPENAI_AVAILABLE = False
-    print("🔧 OpenAI not available - using fallback responses")
+from wiki_engine import WikiParser, GitSyncEngine, FeedGenerator
+from wiki_engine.card_components import WikiCard, RoadmapCard, StatsCard, TimelineRoadmap, render_dashboard_header
 
-# Muscle Memory available for development workflows (not dashboard UI)
+def load_custom_css():
+    """
+    🎨 Load our beautiful custom CSS styling
+    """
+    css_file = Path("dashboard_assets/styles.css")
+    if css_file.exists():
+        with open(css_file, 'r') as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    else:
+        st.warning("⚠️ CSS file not found - dashboard will use default styling")
 
-# Configure the page
-st.set_page_config(
-    page_title="SuperApp Command Center",
-    page_icon="🚀",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-    # Enhanced CSS for better UI/UX and mobile responsiveness
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.5rem;
-        color: #FF6B6B;
-        text-align: center;
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
+def initialize_wiki_engine():
+    """
+    🔧 Initialize our wiki engine components
+    """
+    if 'wiki_parser' not in st.session_state:
+        st.session_state.wiki_parser = WikiParser("clients-hub-wiki")
     
-    /* Mobile responsiveness */
-    @media (max-width: 768px) {
-        .main-header {
-            font-size: 2rem;
-        }
-        .stColumns > div {
-            margin-bottom: 1rem;
-        }
-    }
-    .metric-card {
-        background-color: #F0F2F6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 5px solid #FF6B6B;
-        margin-bottom: 1rem;
-    }
-    .achievement-badge {
-        background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 15px;
-        margin: 0.2rem;
-        display: inline-block;
-        font-size: 0.9rem;
-    }
+    if 'git_sync' not in st.session_state:
+        st.session_state.git_sync = GitSyncEngine("clients-hub-wiki")
+    
+    if 'feed_generator' not in st.session_state:
+        st.session_state.feed_generator = FeedGenerator(st.session_state.wiki_parser)
+    
+    return st.session_state.wiki_parser, st.session_state.git_sync, st.session_state.feed_generator
 
-    .nav-section {
-        background-color: #F8F9FA;
-        padding: 0.5rem;
-        border-radius: 0.3rem;
-        margin: 0.5rem 0;
-    }
-    .quick-action-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        text-align: center;
-        margin: 0.5rem 0;
-    }
-    .section-divider {
-        border-top: 2px solid #E1E5E9;
-        margin: 2rem 0 1rem 0;
-    }
-    .activity-card {
-        background: white;
-        border: 1px solid #E1E5E9;
-        border-radius: 12px;
-        padding: 1rem;
-        margin: 0.5rem 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .activity-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-    .activity-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-    .activity-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
-    .activity-title {
-        font-weight: 600;
-        color: #1f2937;
-        margin: 0;
-    }
-    .activity-meta {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin-top: 0.25rem;
-    }
-    .activity-description {
-        color: #4b5563;
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-    }
-    /* Better spacing and readability */
-    .stMetric {
-        background-color: #FFFFFF;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border: 1px solid #E1E5E9;
-    }
-    /* Sidebar improvements */
-    .css-1d391kg {
-        padding-top: 1rem;
-    }
-</style>
-""", unsafe_allow_html=True)
+def sync_wiki_updates(git_sync):
+    """
+    🔄 Check for and pull wiki updates
+    """
+    with st.spinner("🔄 Checking for wiki updates..."):
+        sync_result = git_sync.pull_wiki_updates()
+        
+        if sync_result["status"] == "success":
+            if sync_result["changes_detected"]:
+                st.success(f"✅ Wiki updated! {len(sync_result['files_updated'])} files changed")
+                # Clear cache to reload fresh data
+                if 'feed_generator' in st.session_state:
+                    st.session_state.feed_generator.feed_cache.clear()
+            else:
+                st.info("📄 Wiki is up to date")
+        else:
+            st.error(f"❌ Sync failed: {sync_result.get('error', 'Unknown error')}")
+    
+    return sync_result
 
-def load_project_data():
-    """Load current project data from files and git"""
-    data = {
-        "current_phase": "initialization",
-        "active_vertical": "food",
-        "team_members": ["James Walker", "Nick Denysov", "Pavel", "Brian"],
-        "completed_features": [
-            "Dashboard creation and deployment",
-            "Role system architecture design", 
-            "Project documentation",
-            "AI assistant integration",
-            "Muscle Memory setup"
-        ],
-        "active_todos": [
-            "Laravel backend initialization",
-            "Food vertical API development",
-            "Database schema implementation",
-            "Payment integration planning",
-            "Role permissions coding"
-        ],
-        "role_progress": {
-            "food": 85,
-            "spa": 20,
-            "gym": 10,
-            "trade": 5
-        },
-        "repositories": {
-            "clients-hub": {
-                "url": "https://github.com/Shared-Concepts/clients-hub",
-                "description": "Multi-tenant account management with sophisticated role system",
-                "status": "Active Development",
-                "lead": "Nick Denysov",
-                "features": [
-                    "Account Signup & Email Confirmation", 
-                    "7-day Invite Links System", 
-                    "Multi-Account User Management", 
-                    "4-Tier Role Permissions (Owner/Admin/Manager/Staff)",
-                    "Default Account Auto-Creation",
-                    "Inactive Account Handling"
-                ],
-                "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki",
-                "wiki_pages": 4,
-                "documentation_quality": "Comprehensive"
-            }
-        },
-        "recent_activity": [
-            {
-                "title": "Brevo Laravel Integration Research",
-                "description": "Nick researching native Laravel mailing approach with Brevo",
-                "timestamp": "Today",
-                "author": "Nick Denysov",
-                "type": "research",
-                "link": None,
-                "icon": "🔬"
-            },
-            {
-                "title": "Comprehensive Wiki Documentation",
-                "description": "4 detailed pages covering Account Management, User System, Permissions Matrix",
-                "timestamp": "Today",
-                "author": "Development Team",
-                "type": "docs",
-                "link": "https://github.com/Shared-Concepts/clients-hub/wiki",
-                "icon": "📚"
-            },
-            {
-                "title": "Clients Hub Repository Initialized",
-                "description": "Nick set up the account management backend repository",
-                "timestamp": "2 hours ago",
-                "author": "Nick Denysov",
-                "type": "repo",
-                "link": "https://github.com/Shared-Concepts/clients-hub",
-                "icon": "🚀"
-            },
-            {
-                "title": "Account Signup System Complete",
-                "description": "Successfully implemented user registration flow",
-                "timestamp": "Yesterday",
-                "author": "Nick Denysov", 
-                "type": "feature",
-                "link": None,
-                "icon": "✅"
-            },
-            {
-                "title": "Account Invitations Feature Deployed",
-                "description": "Email invitation system ready for testing",
-                "timestamp": "Yesterday",
-                "author": "Nick Denysov",
-                "type": "feature", 
-                "link": None,
-                "icon": "📧"
-            },
-            {
-                "title": "Permissions Wiki Created",
-                "description": "Comprehensive permissions table documented",
-                "timestamp": "Today",
-                "author": "Nick Denysov",
-                "type": "docs",
-                "link": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions",
-                "icon": "📖"
-            }
-        ]
-    }
+def render_dashboard_header_section(feed_generator):
+    """
+    🔝 Render the beautiful dashboard header with roadmap and stats
+    """
+    st.markdown("# SuperApp Documentation Dashboard")
+    st.markdown("*Where wiki documentation becomes engaging and beautiful*")
     
-    # Try to load real data
+    # Dashboard sync status
+    col1, col2, col3 = st.columns([2, 1, 1])
     
-    # Load TODOs if available
-    todos_file = Path("todos.json")
-    if todos_file.exists():
-        try:
-            with open(todos_file, 'r') as f:
-                todo_data = json.load(f)
-                data["active_todos"] = [t["content"] for t in todo_data.get("todos", []) 
-                                      if t["status"] != "completed"]
-                data["completed_features"] = [t["content"] for t in todo_data.get("todos", []) 
-                                             if t["status"] == "completed"]
-        except:
-            pass
+    with col1:
+        st.markdown("**Live Wiki Dashboard** - Powered by Git Repository")
     
-    return data
+    with col2:
+        if st.button("Sync Wiki", help="Pull latest updates from Git"):
+            sync_wiki_updates(st.session_state.git_sync)
+            st.rerun()
+    
+    with col3:
+        last_sync = getattr(st.session_state.git_sync, 'last_sync', None)
+        if last_sync:
+            st.caption(f"Last sync: {last_sync.strftime('%H:%M')}")
+        else:
+            st.caption("Never synced")
+    
+    st.markdown("---")
+    
+    # Stats overview
+    stats_data = feed_generator.create_stats_summary()
+    stats_card = StatsCard(stats_data)
+    stats_card.render()
+    
+
+
+def render_wiki_feed(feed_generator):
+    """
+    🎴 Render the main wiki documentation feed
+    """
+    # Check if we're viewing a specific card in detail
+    viewing_card = None
+    for key in st.session_state.keys():
+        if key.startswith('viewing_card_') and st.session_state[key]:
+            viewing_card = key.replace('viewing_card_', '')
+            break
+    
+    if viewing_card:
+        # Show detailed view for the selected card
+        timeline = feed_generator.generate_activity_timeline()
+        selected_card = next((card for card in timeline if card.get('id') == viewing_card), None)
+        
+        if selected_card:
+            wiki_card = WikiCard(selected_card)
+            wiki_card._show_full_content()
+        return
+    
+    # Normal feed view
+    st.markdown("## Documentation Feed")
+    st.markdown("*Your team's wiki content, beautifully displayed*")
+    
+    # Generate the timeline of cards
+    timeline = feed_generator.generate_activity_timeline()
+    
+    if not timeline:
+        st.warning("📄 No wiki content found. Make sure the wiki repository is cloned and contains markdown files.")
+        return
+    
+    # Display cards in full-width rows with proper card styling
+    for i, card_data in enumerate(timeline):
+        with st.container():
+            wiki_card = WikiCard(card_data)
+            wiki_card.render()
+            
+            # Add some spacing between cards
+            if i < len(timeline) - 1:
+                st.markdown("<br>", unsafe_allow_html=True)
+
+def render_timeline_roadmap(feed_generator):
+    """
+    🗺️ Render the beautiful timeline-style roadmap
+    """
+    roadmap_data = feed_generator.generate_roadmap_cards()
+    timeline_roadmap = TimelineRoadmap(roadmap_data)
+    timeline_roadmap.render()
 
 def render_sidebar():
-    """Render the navigation sidebar"""
-    st.sidebar.markdown("# SuperApp Command")
-    
-    # Navigation first - most important
-    st.sidebar.markdown("### **NAVIGATION**")
-    all_pages = {
-        "Project Overview": "overview",
-        "Project Roadmap": "roadmap", 
-        "AI Assistant": "ai_assistant",
-        "Role System": "roles",
-        "Business Verticals": "verticals",
-        "Performance": "optimization"
-    }
-    
-    # Simple, clear navigation - no confusing separators
-    page_options = list(all_pages.keys())
-    
-    # Check if a page was selected via button (session state)
-    if "selected_page" in st.session_state:
-        selected_page = st.session_state.selected_page
-        # Find the display name for this page
-        selected_display = None
-        for display, page_value in all_pages.items():
-            if page_value == selected_page:
-                selected_display = display
-                break
-        if selected_display is None:
-            selected_display = "Project Overview"
-    else:
-        selected_display = "Project Overview"
-    
-    # Use radio buttons instead of dropdown for better UX
-    selected_display = st.sidebar.radio("", page_options, 
-                                       index=page_options.index(selected_display) if selected_display in page_options else 0)
-    
-    selected_page = all_pages.get(selected_display, "overview")
-    
-    # Update session state to match selectbox
-    st.session_state.selected_page = selected_page
-    
-    # Quick Status section - after navigation
-    data = load_project_data()
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### Quick Status")
-    st.sidebar.success(f"Phase: {data['current_phase'].title()}")
-    st.sidebar.info(f"Focus: {data['active_vertical'].title()} Vertical")
-    
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### Quick Stats")
-    st.sidebar.metric("Active TODOs", len(data["active_todos"]))
-    st.sidebar.metric("Completed Features", len(data["completed_features"]))
-    
-    return selected_page
-
-def render_overview_page():
-    """Render the main project overview page"""
-    st.markdown('<h1 class="main-header">SuperApp Command Center</h1>', unsafe_allow_html=True)
-    
-    # Quick navigation cards at the top
-    st.markdown("### Quick Access")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("View Full Roadmap", use_container_width=True):
-            st.session_state.selected_page = "roadmap"
+    """
+    📋 Render the sidebar with additional controls and info
+    """
+    with st.sidebar:
+        st.markdown("# Control Panel")
+        
+        # Wiki status
+        st.markdown("## Wiki Status")
+        
+        if hasattr(st.session_state, 'wiki_parser'):
+            wiki_files = st.session_state.wiki_parser.get_all_wiki_files()
+            st.metric("Wiki Files", len(list(wiki_files)))
+        
+        if hasattr(st.session_state, 'feed_generator'):
+            cache_size = len(st.session_state.feed_generator.feed_cache)
+            st.metric("Cached Cards", cache_size)
+        
+        st.markdown("---")
+        
+        # Dashboard controls
+        st.markdown("## Dashboard Controls")
+        
+        if st.button("Clear Cache"):
+            if hasattr(st.session_state, 'feed_generator'):
+                st.session_state.feed_generator.feed_cache.clear()
+                st.success("Cache cleared!")
+        
+        if st.button("Force Refresh"):
+            # Clear all session state and reload
+            for key in list(st.session_state.keys()):
+                if key.startswith(('wiki_', 'git_', 'feed_')):
+                    del st.session_state[key]
+            st.success("Dashboard refreshed!")
             st.rerun()
-    
-    with col2:
-        if st.button("Ask AI Assistant", use_container_width=True):
-            st.session_state.selected_page = "ai_assistant"
-            st.rerun()
-    
-    with col3:
-        if st.button("Check Progress", use_container_width=True):
-            st.session_state.selected_page = "verticals"
-            st.rerun()
-    
-    st.markdown("---")
-    
-    data = load_project_data()
-    
-    # Recent Activity Section - TOP PRIORITY for team engagement
-    st.markdown("### Recent Activity")
-    
-    recent_activity = data.get("recent_activity", [])
-    
-    # Show recent activity in a clean feed
-    col1, col2 = st.columns(2)
-    
-    for i, activity in enumerate(recent_activity[:6]):  # Show max 6 recent items
-        with col1 if i % 2 == 0 else col2:
-            # Create activity card
-            card_html = f"""
-            <div class="activity-card">
-                <div class="activity-header">
-                    <span class="activity-icon">{activity['icon']}</span>
-                    <h4 class="activity-title">{activity['title']}</h4>
-                </div>
-                <p class="activity-description">{activity['description']}</p>
-                <div class="activity-meta">
-                    {activity['author']} • {activity['timestamp']}
-                </div>
-            </div>
-            """
-            st.markdown(card_html, unsafe_allow_html=True)
-            
-            # Add link button if available
-            if activity.get('link'):
-                st.markdown(f"🔗 [View →]({activity['link']})")
-    
-    # Main metrics row - with better visual hierarchy
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
-    st.markdown("### Project Status")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("Current Phase", data["current_phase"].title(), "Active")
-    
-    with col2:
-        st.metric("Active Vertical", data["active_vertical"].title(), "Focus")
-    
-    with col3:
-        st.metric("Team Members", len(data["team_members"]), "Collaborating")
-    
-    # Progress visualization with better layout
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
-    
-    # Tabbed interface for better organization
-    tab1, tab2, tab3 = st.tabs(["Progress", "Achievements", "Current Work"])
-    
-    with tab1:
-        st.markdown("#### Business Vertical Progress")
         
-        # Create progress chart with better styling
-        verticals = list(data["role_progress"].keys())
-        progress = list(data["role_progress"].values())
-        
-        fig = go.Figure(data=[
-            go.Bar(x=verticals, y=progress, 
-                  marker_color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
-                  text=[f"{p}%" for p in progress],
-                  textposition='auto')
-        ])
-        
-        fig.update_layout(
-            title="Business Vertical Implementation",
-            yaxis_title="Completion %",
-            xaxis_title="Business Type",
-            showlegend=False,
-            height=400,
-            margin=dict(t=50, b=50, l=50, r=50)
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-    
-    with tab2:
-        st.markdown("#### Team Achievements")
-        
-        # Team achievements
-        achievements = [
-            "Role System Architecture Complete",
-            "Comprehensive Documentation Created", 
-            "Muscle Memory Integration Active",
-            "Git Repository Successfully Initialized",
-            "Development Framework Established",
-            "Project Roadmap Visualization Added"
-        ]
-        
-        # Display in a more organized way
-        for i, achievement in enumerate(achievements):
-            if i % 2 == 0:
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.success(f"• {achievement}")
-            else:
-                with col2:
-                    st.success(f"• {achievement}")
-    
-    with tab3:
-        st.markdown("#### Current Focus Areas")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("**Completed Features**")
-            completed = data["completed_features"] or ["Dashboard creation", "Role system design", "Project planning"]
-            for feature in completed:
-                st.success(f"• {feature}")
-        
-        with col2:
-            st.markdown("**Active TODOs**") 
-            active = data["active_todos"] or ["Laravel backend implementation", "Food vertical development", "API endpoint creation"]
-            for todo in active:
-                st.info(f"• {todo}")
-    
-    # Project Repositories Section
-    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
-    st.markdown("### Project Repositories")
-    
-    repositories = data.get("repositories", {})
-    
-    col1, col2 = st.columns(2)
-    
-    for i, (repo_name, repo_info) in enumerate(repositories.items()):
-        with col1 if i % 2 == 0 else col2:
-            with st.container():
-                st.markdown(f"#### {repo_name}")
-                st.markdown(f"**Lead**: {repo_info['lead']}")
-                st.markdown(f"**Status**: {repo_info['status']}")
-                st.markdown(f"**Description**: {repo_info['description']}")
-                
-                # Repository link
-                st.markdown(f"🔗 [View Repository]({repo_info['url']})")
-                
-                # Wiki link if available
-                if 'wiki' in repo_info:
-                    st.markdown(f"📖 [Permissions Wiki]({repo_info['wiki']})")
-                
-                # Features
-                st.markdown("**Recent Features**:")
-                for feature in repo_info['features']:
-                    st.markdown(f"• {feature}")
-                
-                st.markdown("---")
-    
-    # Clean end of overview page
-
-def render_ai_assistant_page():
-    """Render the AI assistant page"""
-    st.markdown("# SuperApp AI Assistant")
-    
-    # Check AI availability (silent)
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
-    openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
-    
-    # Quick Questions at the top
-    st.markdown("### Quick Questions")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("Status Report", use_container_width=True):
-            report = generate_status_report()
-            st.text_area("Status Report", report, height=200)
-    
-    with col2:
-        if st.button("Next Tasks", use_container_width=True):
-            tasks = suggest_next_tasks()
-            st.markdown("#### Suggested Next Tasks:")
-            for task in tasks:
-                st.info(f"• {task}")
-    
-    with col3:
-        if st.button("Find Issues", use_container_width=True):
-            opportunities = identify_optimizations()
-            st.markdown("#### Optimization Opportunities:")
-            for opp in opportunities:
-                st.warning(f"• {opp}")
-    
-    # Chat interface
-    st.markdown("---")
-    
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": "Hi! I'm your SuperApp AI assistant. I know everything about your project - roles, architecture, progress, and goals. How can I help the team today?"}
-        ]
-    
-    # Display chat messages in a container
-    chat_container = st.container()
-    with chat_container:
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-    
-    # Chat input
-    if prompt := st.chat_input("Ask about the project, team, progress, or get recommendations..."):
-        # Add user message to session
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        # Generate and add AI response
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                response = generate_ai_response(prompt)
-            st.markdown(response)
-        st.session_state.messages.append({"role": "assistant", "content": response})
-        
-        # Rerun to show the new messages in the chat history
-        st.rerun()
-    
-    # Clean end of chat interface
-
-def get_project_context():
-    """Get comprehensive project context for AI"""
-    data = load_project_data()
-    
-    # Read key project files for context
-    context_parts = []
-    
-    # Project overview
-    context_parts.append(f"""
-SUPERAPP PROJECT OVERVIEW:
-- Current Phase: {data['current_phase']}
-- Active Vertical: {data['active_vertical']} 
-- Team: {', '.join(data['team_members'])}
-- Active TODOs: {len(data['active_todos'])}
-- Completed Features: {len(data['completed_features'])}
-""")
-    
-    # Repository information
-    repositories = data.get("repositories", {})
-    if repositories:
-        repo_context = "ACTIVE REPOSITORIES:\n"
-        for repo_name, repo_info in repositories.items():
-            repo_context += f"- {repo_name}: {repo_info['description']} (Lead: {repo_info['lead']}, Status: {repo_info['status']})\n"
-            if repo_name == "clients-hub":
-                repo_context += f"  * Recent work: Account Signup ✅, Account Invitations ✅, Invites/Members Management 🔄, Permissions System 📋\n"
-                repo_context += f"  * Wiki: {repo_info.get('wiki', 'N/A')}\n"
-        context_parts.append(repo_context)
-    
-    # Try to read context files
-    try:
-        if Path("SUPERAPP_CONTEXT.md").exists():
-            with open("SUPERAPP_CONTEXT.md", 'r') as f:
-                context_parts.append(f"PROJECT CONTEXT:\n{f.read()[:2000]}")
-    except:
-        pass
-    
-    try:
-        if Path("user_roles_plan.md").exists():
-            with open("user_roles_plan.md", 'r') as f:
-                context_parts.append(f"ROLE SYSTEM:\n{f.read()[:2000]}")
-    except:
-        pass
-    
-    return "\n\n".join(context_parts)
-
-def generate_ai_response(prompt):
-    """Generate AI response using real LLM"""
-    
-    # Get API keys from environment or Streamlit secrets
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY", "")
-    openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
-    
-    project_context = get_project_context()
-    
-    system_prompt = f"""You are the SuperApp AI Assistant, an expert on this specific project. You have complete context about:
-
-{project_context}
-
-GUIDELINES:
-- Be helpful, specific, and actionable
-- Reference actual project details when relevant
-- Support the ENTIRE team's success (no individual competition)
-- Suggest concrete next steps when appropriate
-- Use emojis and formatting to be engaging
-- Keep responses concise but informative
-- Be helpful and actionable for the team"""
-
-    # Try Anthropic Claude first
-    if ANTHROPIC_AVAILABLE and anthropic_key:
-        try:
-            client = anthropic.Anthropic(api_key=anthropic_key)
-            
-            response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=500,
-                system=system_prompt,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            
-            return response.content[0].text
-            
-        except Exception as e:
-            st.error(f"Claude API error: {str(e)[:100]}")
-    
-    # Try OpenAI as fallback
-    if OPENAI_AVAILABLE and openai_key:
-        try:
-            client = openai.OpenAI(api_key=openai_key)
-            
-            response = client.chat.completions.create(
-                model="gpt-4",
-                max_tokens=500,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            
-            return response.choices[0].message.content
-            
-        except Exception as e:
-            st.error(f"OpenAI API error: {str(e)[:100]}")
-    
-    # Fallback to simulated responses
-    return generate_fallback_response(prompt)
-
-def generate_fallback_response(prompt):
-    """Fallback responses when no AI available"""
-    prompt_lower = prompt.lower()
-    
-    if "status" in prompt_lower or "progress" in prompt_lower:
-        return """**Project Status Update**:
-
-**Current Phase**: Initialization → MVP transition  
-**Progress**: Role system architecture complete, dashboard deployed  
-**Next Priority**: Laravel backend implementation
-
-**Team Focus**:
-- Nick/Pavel: Backend development with role system
-- Brian: Optimization and performance tracking  
-- James: Project coordination and stakeholder updates
-
-The team is making excellent collaborative progress!"""
-    
-    elif "nick" in prompt_lower or "backend" in prompt_lower:
-        return """🛠️ **Backend Development Guidance**:
-
-**Priority Tasks for Nick/Pavel**:
-1. Implement Laravel role system using our permissions matrix
-2. Set up Account/Business/User entity relationships
-3. Create API endpoints for food vertical
-4. Database schema for multi-tenant architecture
-
-**Suggestion**: Start with Phase 1 roles (Owner, Admin, Manager, Staff) and build incrementally! 💪"""
-    
-    elif "ai" in prompt_lower or "chat" in prompt_lower:
-        return """🤖 **AI Assistant Setup**:
-
-To activate full AI capabilities:
-1. Set up API keys in Streamlit secrets or environment variables
-2. Add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
-3. Restart the dashboard
-
-**Currently running in basic mode** with project-aware fallback responses! 🚀"""
-    
-    else:
-        return f"""💡 **SuperApp AI Assistant**:
-
-I can help with:
-- Project status and progress updates
-- Team task recommendations  
-- Architecture and technical questions
-- Role system implementation guidance
-- Optimization opportunities
-
-**Pro tip**: For full AI capabilities, configure API keys in the dashboard settings!
-
-Ask me anything about the SuperApp project! 🎯"""
-
-def generate_status_report():
-    """Generate a status report"""
-    data = load_project_data()
-    
-    report = f"""SuperApp Development Status Report
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-
-OVERVIEW:
-- Phase: {data['current_phase'].title()}
-- Active Vertical: {data['active_vertical'].title()}
-- Team Members: {len(data['team_members'])}
-
-PROGRESS:
-- Food Vertical: 85% complete
-- Role System: Architecture complete, implementation in progress
-- Muscle Memory: Successfully integrated
-- Documentation: Comprehensive and up-to-date
-
-NEXT PRIORITIES:
-1. Laravel backend implementation (Nick/Pavel)
-2. API endpoint development for food vertical
-3. Role system database implementation
-4. Payment integration planning
-
-TEAM STATUS:
-All team members actively contributing with clear responsibilities."""
-    
-    return report
-
-def suggest_next_tasks():
-    """Suggest next tasks for the team"""
-    return [
-        "Implement Laravel role system database schema",
-        "Create API endpoints for food vertical",
-        "Set up development environment for backend team",
-        "Begin food service order processing workflow",
-        "Plan spa vertical role specializations",
-        "Update Muscle Memory with backend patterns"
-    ]
-
-def identify_optimizations():
-    """Identify optimization opportunities"""
-    return [
-        "Cache frequently used role permission checks",
-        "Optimize database queries for multi-tenant architecture", 
-        "Implement automated testing for role system",
-        "Set up CI/CD pipeline for faster deployments",
-        "Create reusable components for business verticals",
-        "Establish coding standards for team consistency"
-    ]
-
-def render_role_tracker_page():
-    """Render the role system tracking page"""
-    st.markdown("# Role System Tracker")
-    
-    data = load_project_data()
-    
-    # Phase progress
-    phases = {
-        "Phase 1: Core Roles": {"status": "✅ Complete", "progress": 100},
-        "Phase 2: Specialized Roles": {"status": "🔄 In Progress", "progress": 60},
-        "Phase 3: Advanced Features": {"status": "⏳ Planned", "progress": 0}
-    }
-    
-    for phase, info in phases.items():
-        col1, col2, col3 = st.columns([3, 2, 1])
-        with col1:
-            st.markdown(f"### {phase}")
-        with col2:
-            st.progress(info["progress"] / 100)
-        with col3:
-            st.markdown(info["status"])
-    
-    # Business type progress
-    st.markdown("---")
-    st.markdown("### Business Type Implementation")
-    
-    for business, progress in data["role_progress"].items():
-        st.markdown(f"#### {business.title()} Business")
-        st.progress(progress / 100)
-        st.caption(f"{progress}% complete")
-
-
-def render_verticals_page():
-    """Render business verticals progress"""
-    st.markdown("# Business Vertical Development")
-    
-    data = load_project_data()
-    
-    verticals = {
-        "Food Service": {
-            "progress": 85,
-            "features": ["Menu Management", "Order Processing", "Payment Integration"],
-            "next": "Complete order workflow and commission tracking"
-        },
-        "Spa/Wellness": {
-            "progress": 20,
-            "features": ["Booking System", "Service Management", "Client Tracking"],
-            "next": "Plan booking system architecture"
-        },
-        "Gym/Fitness": {
-            "progress": 10,
-            "features": ["Membership Management", "Class Booking", "Equipment Tracking"],
-            "next": "Define membership tier structure"
-        },
-        "Trade Business": {
-            "progress": 5,
-            "features": ["Quote Management", "Job Scheduling", "Inventory Tracking"],
-            "next": "Research trade business workflows"
-        }
-    }
-    
-    for vertical, info in verticals.items():
-        with st.expander(f"{vertical} - {info['progress']}% Complete"):
-            st.progress(info['progress'] / 100)
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("**Features:**")
-                for feature in info['features']:
-                    st.markdown(f"• {feature}")
-            
-            with col2:
-                st.markdown("**Next Priority:**")
-                st.info(info['next'])
-
-def render_roadmap_page():
-    """Render the project roadmap from SUPERAPP_CONTEXT.md"""
-    st.markdown("# SuperApp Project Roadmap")
-    st.markdown("### Strategic development timeline and priorities")
-    
-    # Read current status from context file
-    current_phase = "Initialization"
-    try:
-        if Path("SUPERAPP_CONTEXT.md").exists():
-            with open("SUPERAPP_CONTEXT.md", 'r') as f:
-                content = f.read()
-                if "initialization" in content.lower():
-                    current_phase = "Initialization"
-                elif "mvp" in content.lower():
-                    current_phase = "MVP Development"
-    except:
-        pass
-    
-    st.info(f"**Current Phase**: {current_phase}")
-    
-    # Phase timeline
-    phases = [
-        {
-            "phase": "Phase 1: Foundation",
-            "status": "Complete",
-            "duration": "Week 1-2",
-            "progress": 100,
-            "items": [
-                "Project architecture defined",
-                "Role system designed", 
-                "Entity structure (Account/Business/User)",
-                "Tech stack confirmed (Laravel + AI)",
-                "Documentation & memory bank created"
-            ]
-        },
-        {
-            "phase": "Phase 2: Backend Core",
-            "status": "In Progress",
-            "duration": "Week 3-6", 
-            "progress": 45,
-            "items": [
-                "Laravel backend initialization",
-                "Role system implementation",
-                "Database schema & migrations",
-                "API endpoints for core functions",
-                "Authentication & authorization"
-            ]
-        },
-        {
-            "phase": "Phase 3: Food Vertical MVP",
-            "status": "Planned",
-            "duration": "Week 7-10",
-            "progress": 0,
-            "items": [
-                "Menu management system",
-                "Order processing workflow",
-                "Payment integration (Stripe)",
-                "Commission tracking",
-                "Basic admin dashboard"
-            ]
-        },
-        {
-            "phase": "Phase 4: Multi-Tenant Scale",
-            "status": "Future",
-            "duration": "Week 11-14",
-            "progress": 0,
-            "items": [
-                "Multiple business support",
-                "Community organization features", 
-                "Advanced role permissions",
-                "Performance optimization",
-                "Mobile app foundation"
-            ]
-        }
-    ]
-    
-    # Render each phase
-    for phase in phases:
-        with st.expander(f"{phase['phase']} - {phase['status']} ({phase['duration']})"):
-            # Progress bar
-            st.progress(phase['progress'] / 100)
-            st.caption(f"{phase['progress']}% Complete")
-            
-            # Items
-            for item in phase['items']:
-                if phase['status'] == "Complete":
-                    st.success(f"✅ {item}")
-                elif phase['status'] == "In Progress":
-                    st.info(f"🔄 {item}")
-                else:
-                    st.warning(f"⏳ {item}")
-    
-    # Business verticals roadmap
-    st.markdown("---")
-    st.markdown("### Business Verticals Roadmap")
-    
-    verticals_timeline = {
-        "Food Services": {
-            "launch": "Q1 2024",
-            "status": "MVP Development",
-            "features": ["Online ordering", "Menu management", "Payment processing"],
-            "revenue_target": "$10k/month by month 3"
-        },
-        "Spa/Wellness": {
-            "launch": "Q2 2024", 
-            "status": "Planned",
-            "features": ["Booking system", "Service management", "Client profiles"],
-            "revenue_target": "$15k/month by month 6"
-        },
-        "Fitness/Gym": {
-            "launch": "Q3 2024",
-            "status": "Research",
-            "features": ["Membership management", "Class booking", "Trainer scheduling"],
-            "revenue_target": "$20k/month by month 9"
-        },
-        "Trade Services": {
-            "launch": "Q4 2024",
-            "status": "Concept",
-            "features": ["Quote management", "Job scheduling", "Inventory tracking"],
-            "revenue_target": "$25k/month by month 12"
-        }
-    }
-    
-    for vertical, info in verticals_timeline.items():
-        col1, col2, col3 = st.columns([2, 1, 2])
-        
-        with col1:
-            st.markdown(f"### {vertical}")
-            st.markdown(f"**Status**: {info['status']}")
-            st.markdown(f"**Launch**: {info['launch']}")
-        
-        with col2:
-            # Status indicator
-            if "Development" in info['status']:
-                st.success("🚀 Active")
-            elif "Planned" in info['status']:
-                st.info("📋 Ready")
-            elif "Research" in info['status']:
-                st.warning("🔍 Research")
-            else:
-                st.error("💡 Concept")
-        
-        with col3:
-            st.markdown("**Key Features**:")
-            for feature in info['features']:
-                st.markdown(f"• {feature}")
-            st.markdown(f"**Target**: {info['revenue_target']}")
-    
-    # Critical path & dependencies
-    st.markdown("---")
-    st.markdown("### Critical Path & Dependencies")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("#### Blockers & Dependencies")
-        blockers = [
-            "Laravel backend completion → Food vertical development",
-            "Role system implementation → Multi-tenant features",
-            "Payment integration → Commission tracking",
-            "Mobile app foundation → iOS/Android deployment"
-        ]
-        
-        for blocker in blockers:
-            st.warning(f"• {blocker}")
-    
-    with col2:
-        st.markdown("#### Success Milestones")
-        milestones = [
-            "First food order processed (Week 8)",
-            "10 businesses onboarded (Week 12)",
-            "Break-even revenue achieved (Week 16)",
-            "Multi-vertical platform ready (Week 20)"
-        ]
-        
-        for milestone in milestones:
-            st.info(f"• {milestone}")
-    
-
-
-def render_optimization_page():
-    """Render optimization tracking"""
-    st.markdown("# Optimization Dashboard")
-    
-    # Development velocity simulation
-    dates = [datetime.now() - timedelta(days=x) for x in range(30, 0, -1)]
-    velocity = [2, 3, 5, 4, 6, 8, 7, 9, 11, 10, 12, 15, 14, 16, 18, 17, 19, 22, 21, 24, 26, 25, 28, 30, 29, 32, 35, 34, 37, 40]
-    
-    df = pd.DataFrame({
-        'Date': dates,
-        'Velocity': velocity
-    })
-    
-    fig = px.line(df, x='Date', y='Velocity', title='Development Velocity (Story Points/Week)')
-    st.plotly_chart(fig, use_container_width=True)
-    
-    # Optimization goals
-    st.markdown("---")
-    st.markdown("### Current Optimization Goals")
-    
-    goals = [
-        {"goal": "Reduce Laravel API response time", "target": "<200ms", "current": "350ms", "status": "In Progress"},
-        {"goal": "Increase role system reusability", "target": "90%", "current": "75%", "status": "In Progress"},
-        {"goal": "Improve documentation coverage", "target": "95%", "current": "88%", "status": "In Progress"}
-    ]
-    
-    for goal in goals:
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.markdown(f"**{goal['goal']}**")
-        with col2:
-            st.markdown(f"Target: {goal['target']}")
-        with col3:
-            st.markdown(f"Current: {goal['current']}")
-        with col4:
-            st.markdown(goal['status'])
+        st.markdown("---")
+        st.caption("Built with Monday Madness energy by SuperApp Team")
 
 def main():
-    """Main dashboard application"""
+    """
+    🎬 Main dashboard application
+    """
+    # Page config
+    st.set_page_config(
+        page_title="SuperApp Wiki Dashboard",
+        page_icon="🚀",
+        layout="centered",
+        initial_sidebar_state="expanded"
+    )
     
-    # Render sidebar and get selected page
-    selected_page = render_sidebar()
+    # Load custom styling
+    load_custom_css()
     
-    # Render the selected page
-    if selected_page == "overview":
-        render_overview_page()
-    elif selected_page == "roadmap":
-        render_roadmap_page()
-    elif selected_page == "ai_assistant":
-        render_ai_assistant_page()
-    elif selected_page == "roles":
-        render_role_tracker_page()
-
-    elif selected_page == "verticals":
-        render_verticals_page()
-    elif selected_page == "optimization":
-        render_optimization_page()
+    # Initialize components
+    try:
+        wiki_parser, git_sync, feed_generator = initialize_wiki_engine()
+    except Exception as e:
+        st.error(f"❌ Failed to initialize wiki engine: {e}")
+        st.info("💡 Make sure the 'clients-hub-wiki' directory exists and contains wiki content")
+        return
     
-    # Clean footer - no clutter needed
+    # Render sidebar
+    render_sidebar()
+    
+    # Main content area
+    try:
+        # Header section
+        render_dashboard_header_section(feed_generator)
+        
+        # Wiki feed section
+        render_wiki_feed(feed_generator)
+        
+        # Timeline roadmap section
+        st.markdown("---")
+        render_timeline_roadmap(feed_generator)
+        
+        # Footer
+        st.markdown("---")
+        st.markdown("### 🎉 Dashboard Complete!")
+        st.markdown("*This dashboard automatically syncs with your Git Wiki for real-time documentation display*")
+        
+        # Success celebration
+        col1, col2, col3 = st.columns(3)
+        with col2:
+            st.balloons()
+        
+    except Exception as e:
+        st.error(f"❌ Dashboard error: {e}")
+        st.info("🔧 Check the sidebar for refresh options")
 
 if __name__ == "__main__":
     main() 

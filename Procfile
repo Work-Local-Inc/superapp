@@ -1,1 +1,1 @@
-web: streamlit run wiki_dashboard_main.py --server.port $PORT --server.address 0.0.0.0 
+web: streamlit run superapp_dashboard.py --server.port $PORT --server.address 0.0.0.0 
