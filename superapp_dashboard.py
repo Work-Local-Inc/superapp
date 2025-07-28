@@ -30,18 +30,143 @@ def load_custom_css():
 
 def initialize_wiki_engine():
     """
-    🔧 Initialize our wiki engine components
+    🔧 Initialize our wiki engine components with demo mode fallback
     """
-    if 'wiki_parser' not in st.session_state:
-        st.session_state.wiki_parser = WikiParser("clients-hub-wiki")
+    try:
+        # Try to initialize with real wiki
+        wiki_dir = Path("clients-hub-wiki")
+        if not wiki_dir.exists():
+            st.info("📡 Running in DEMO mode - showing sample content")
+            return initialize_demo_mode()
+        
+        if 'wiki_parser' not in st.session_state:
+            st.session_state.wiki_parser = WikiParser("clients-hub-wiki")
+        
+        if 'git_sync' not in st.session_state:
+            st.session_state.git_sync = GitSyncEngine("clients-hub-wiki")
+        
+        if 'feed_generator' not in st.session_state:
+            st.session_state.feed_generator = FeedGenerator(st.session_state.wiki_parser)
+        
+        return st.session_state.wiki_parser, st.session_state.git_sync, st.session_state.feed_generator
     
-    if 'git_sync' not in st.session_state:
-        st.session_state.git_sync = GitSyncEngine("clients-hub-wiki")
+    except Exception as e:
+        st.warning(f"📡 Wiki unavailable, running in DEMO mode: {str(e)[:100]}")
+        return initialize_demo_mode()
+
+def initialize_demo_mode():
+    """
+    🎭 Initialize demo mode with sample wiki content for Streamlit Cloud
+    """
+    class MockWikiParser:
+        def __init__(self):
+            self.wiki_dir = Path("demo")
+        def get_all_wiki_files(self):
+            return ["Home.md", "Account-Management.md", "User.md"]
     
-    if 'feed_generator' not in st.session_state:
-        st.session_state.feed_generator = FeedGenerator(st.session_state.wiki_parser)
+    class MockGitSync:
+        def __init__(self):
+            self.last_sync = datetime.now()
+        def pull_wiki_updates(self):
+            return {"status": "demo", "message": "Demo mode - no sync available"}
     
-    return st.session_state.wiki_parser, st.session_state.git_sync, st.session_state.feed_generator
+    class MockFeedGenerator:
+        def __init__(self, parser):
+            self.parser = parser
+            self.feed_cache = {}
+        
+        def generate_activity_timeline(self):
+            return [
+                {
+                    "id": "demo_home",
+                    "title": "SuperApp Documentation Home",
+                    "summary": "Welcome to the SuperApp platform! This demo shows how your team's wiki documentation would be beautifully displayed as cards.",
+                    "content": "# SuperApp Documentation\n\nThis is a demo of how your wiki content would appear. The real dashboard will sync with your Git repository to show live documentation.\n\n## Features\n- Real-time Git sync\n- Beautiful card display\n- Timeline roadmap\n- Engagement scoring",
+                    "type": "overview",
+                    "priority": "high",
+                    "engagement_score": 95,
+                    "features": ["Git Integration", "Beautiful UI", "Real-time Updates"],
+                    "content_stats": {
+                        "read_time": "3 min read",
+                        "complexity": "Medium",
+                        "feature_count": 3,
+                        "word_count": 150
+                    }
+                },
+                {
+                    "id": "demo_account",
+                    "title": "Account Management System",
+                    "summary": "Complete user account management with invitations, permissions, and role-based access control.",
+                    "content": "# Account Management\n\n## Features\n- User registration and login\n- Account invitations with 7-day expiry\n- Role-based permissions (Owner, Admin, Manager, Staff)\n- Multi-tenant architecture\n\n## Implementation Status\n✅ User Registration\n✅ Account Invitations\n🔄 Permission System (In Progress)",
+                    "type": "feature",
+                    "priority": "high",
+                    "engagement_score": 88,
+                    "features": ["User Registration", "Invitations", "Permissions", "Multi-tenant"],
+                    "content_stats": {
+                        "read_time": "5 min read",
+                        "complexity": "High",
+                        "feature_count": 4,
+                        "word_count": 200
+                    }
+                },
+                {
+                    "id": "demo_integration",
+                    "title": "Email Integration Research",
+                    "summary": "Research and implementation of Brevo email service for Laravel-based transactional emails.",
+                    "content": "# Email Integration\n\n## Brevo Integration\nResearching the best approach to integrate Brevo with Laravel while maintaining native mailing functionality.\n\n## Requirements\n- Native Laravel mail support\n- Template management\n- Delivery tracking\n- Cost-effective solution",
+                    "type": "research",
+                    "priority": "medium",
+                    "engagement_score": 72,
+                    "features": ["Laravel Integration", "Email Templates", "Delivery Tracking"],
+                    "content_stats": {
+                        "read_time": "2 min read",
+                        "complexity": "Medium",
+                        "feature_count": 3,
+                        "word_count": 100
+                    }
+                }
+            ]
+        
+        def generate_roadmap_cards(self):
+            return [
+                {
+                    "phase": "Foundation & Backend",
+                    "status": "in_progress",
+                    "progress": 75,
+                    "features": ["Laravel Backend", "Database Schema", "Account Management", "User System"]
+                },
+                {
+                    "phase": "Food Vertical",
+                    "status": "pending",
+                    "progress": 15,
+                    "features": ["Restaurant Management", "Menu System", "Order Processing", "Payment Integration"]
+                },
+                {
+                    "phase": "Multi-Vertical Platform",
+                    "status": "pending",
+                    "progress": 5,
+                    "features": ["Spa Booking", "Gym Memberships", "Trade Services", "Unified Dashboard"]
+                }
+            ]
+        
+        def create_stats_summary(self):
+            return {
+                "total_pages": 3,
+                "total_features": 10,
+                "last_updated": "Today",
+                "status": "DEMO MODE"
+            }
+    
+    # Create and store mock instances
+    mock_parser = MockWikiParser()
+    mock_git = MockGitSync()
+    mock_feed = MockFeedGenerator(mock_parser)
+    
+    st.session_state.wiki_parser = mock_parser
+    st.session_state.git_sync = mock_git
+    st.session_state.feed_generator = mock_feed
+    
+    return mock_parser, mock_git, mock_feed
 
 def sync_wiki_updates(git_sync):
     """
