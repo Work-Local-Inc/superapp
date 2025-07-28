@@ -147,18 +147,25 @@ class FeedGenerator:
         """
         🗺️ Generate Coles Notes roadmap from wiki content
         """
+        # Real SuperApp project roadmap from your actual development
         return [
             {
-                "phase": "Foundation",
-                "status": "complete",
-                "progress": 100,
-                "features": ["Wiki Engine", "Parser", "Sync"]
+                "phase": "Foundation & Backend",
+                "status": "in_progress",
+                "progress": 75,
+                "features": ["Laravel Backend", "Database Schema", "Account Management", "User System"]
             },
             {
-                "phase": "Dashboard Cards",
-                "status": "in_progress", 
-                "progress": 0,
-                "features": ["Cards", "Timeline", "Mobile"]
+                "phase": "Food Vertical",
+                "status": "pending",
+                "progress": 15,
+                "features": ["Restaurant Management", "Menu System", "Order Processing", "Payment Integration"]
+            },
+            {
+                "phase": "Multi-Vertical Platform",
+                "status": "pending", 
+                "progress": 5,
+                "features": ["Spa Booking", "Gym Memberships", "Trade Services", "Unified Dashboard"]
             }
         ]
     

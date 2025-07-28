@@ -38,76 +38,94 @@ class WikiCard:
         
     def render(self) -> None:
         """
-        🎨 Render the card in Streamlit
+        🎨 Render the card in Streamlit with compact design
         """
-        # Create the main card container
         with st.container():
-            # Apply custom CSS styling
-            st.markdown(f"""
-            <div class="{self.data.get('style_class', 'wiki-card')}">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">{self.data.get('icon', '📄')}</span>
-                        <h3>{self.data.get('title', 'Untitled')}</h3>
-                    </div>
-                    <div class="card-meta">
-                        <span class="card-type">{self.data.get('type', 'documentation')}</span>
-                        <span class="card-priority priority-{self.data.get('priority', 'low')}">{self.data.get('priority', 'low')}</span>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <p class="card-summary">{self.data.get('summary', 'No summary available')}</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # Compact card header with badge
+            col1, col2 = st.columns([3, 1])
             
-            # Content stats row
-            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.markdown(f"### {self.data.get('icon', '📄')} {self.data.get('title', 'Untitled')}")
+            
+            with col2:
+                priority = self.data.get('priority', 'low')
+                priority_emoji = {"high": "🔥", "medium": "⚡", "low": "📄"}.get(priority, "📄")
+                st.markdown(f"**{priority_emoji} {priority.title()}**")
+            
+            # Card summary
+            summary = self.data.get('summary', 'No summary available')
+            st.markdown(f"*{summary}*")
+            
+            # Inline stats in a compact row
+            features_count = len(self.data.get('features', []))
+            engagement = self.data.get('engagement_score', 0)
+            read_time = self.data.get('content_stats', {}).get('read_time', 'Unknown')
+            
+            st.markdown(f"📚 **{features_count} features** • ⚡ **{engagement}/100** • ⏱️ **{read_time}**")
+            
+            # Single action button for full view
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("📖 View Details", 
+                           key=f"view_{self.data.get('id', 'card')}", 
+                           use_container_width=True):
+                    self._show_full_content()
+            
+            with col2:
+                if st.button("🔗 Wiki Link", 
+                           key=f"wiki_{self.data.get('id', 'card')}", 
+                           use_container_width=True):
+                                         st.info("📝 Would open wiki page in new tab")
+    
+    def _show_full_content(self):
+        """
+        📖 Show full content in a modal-like experience
+        """
+        # Use session state to track which card is being viewed
+        card_id = self.data.get('id', 'unknown')
+        st.session_state[f'viewing_card_{card_id}'] = True
+        
+        # Create a modal-like display
+        with st.container():
+            st.markdown("---")
+            st.markdown(f"# 📖 {self.data.get('title', 'Content Details')}")
+            
+            # Card metadata
+            col1, col2, col3 = st.columns(3)
             
             with col1:
                 st.metric("📚 Features", len(self.data.get('features', [])))
             
             with col2:
+                engagement = self.data.get('engagement_score', 0)
+                st.metric("⚡ Engagement", f"{engagement}/100")
+            
+            with col3:
                 read_time = self.data.get('content_stats', {}).get('read_time', 'Unknown')
                 st.metric("⏱️ Read Time", read_time)
             
-            with col3:
-                engagement = self.data.get('engagement_score', 0)
-                st.metric("⚡ Score", f"{engagement}/100")
+            # Full content
+            content = self.data.get('content', '')
+            if content:
+                st.markdown("## 📄 Full Documentation")
+                st.markdown(content)
+            else:
+                st.info("No detailed content available")
             
-            with col4:
-                word_count = self.data.get('content_stats', {}).get('word_count', 0)
-                st.metric("📝 Words", word_count)
+            # Features list
+            features = self.data.get('features', [])
+            if features:
+                st.markdown("## ✨ Key Features")
+                for feature in features:
+                    st.markdown(f"- {feature}")
             
-            # Action buttons
-            actions = self.data.get('actions', [])
-            if actions:
-                cols = st.columns(len(actions))
-                for i, action in enumerate(actions):
-                    with cols[i]:
-                        if st.button(f"{action.get('icon', '🔗')} {action.get('label', 'Action')}", 
-                                   key=f"{self.data.get('id', 'card')}_{action.get('action', 'btn')}"):
-                            st.info(f"Action: {action.get('action', 'Unknown')}")
+            # Close button
+            if st.button("← Back to Feed", key=f"close_{card_id}"):
+                del st.session_state[f'viewing_card_{card_id}']
+                st.rerun()
             
-            # Expandable content
-            if self.data.get('expandable', False):
-                with st.expander("📖 View Full Content"):
-                    content = self.data.get('content', '')
-                    if content:
-                        st.markdown(content)
-                    else:
-                        st.info("No detailed content available")
-                    
-                    # Show features if available
-                    features = self.data.get('features', [])
-                    if features:
-                        st.markdown("### ✨ Key Features:")
-                        for feature in features:
-                            st.markdown(f"- {feature}")
-            
-            # Monday Madness energy indicator
-            energy_level = self.data.get('monday_madness_level', 'Building up...')
-            st.caption(f"🎪 Energy Level: {energy_level}")
+            st.markdown("---")
 
 class ExpandableCard(WikiCard):
     """

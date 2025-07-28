@@ -109,6 +109,24 @@ def render_wiki_feed(feed_generator):
     """
     🎴 Render the main wiki documentation feed
     """
+    # Check if we're viewing a specific card in detail
+    viewing_card = None
+    for key in st.session_state.keys():
+        if key.startswith('viewing_card_') and st.session_state[key]:
+            viewing_card = key.replace('viewing_card_', '')
+            break
+    
+    if viewing_card:
+        # Show detailed view for the selected card
+        timeline = feed_generator.generate_activity_timeline()
+        selected_card = next((card for card in timeline if card.get('id') == viewing_card), None)
+        
+        if selected_card:
+            wiki_card = WikiCard(selected_card)
+            wiki_card._show_full_content()
+        return
+    
+    # Normal feed view
     st.markdown("## 📚 Documentation Feed")
     st.markdown("*Your team's wiki content, beautifully displayed*")
     
