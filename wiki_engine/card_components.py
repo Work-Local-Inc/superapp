@@ -53,9 +53,15 @@ class WikiCard:
             
             # Clean, simple approach using Streamlit's built-in expander
             priority = self.data.get('priority', 'low').title()
-            priority_indicator = "🔥" if priority == "High" else ""
+            title = self.data.get('title', 'Untitled')
             
-            with st.expander(f"{self.data.get('title', 'Untitled')} {priority_indicator}", expanded=True):
+            # Clean title with priority badge only if high priority
+            if priority == "High":
+                card_title = f"{title} - High Priority"
+            else:
+                card_title = title
+            
+            with st.expander(card_title, expanded=True):
                 
                 # Card summary
                 summary = self.data.get('summary', 'No summary available')
