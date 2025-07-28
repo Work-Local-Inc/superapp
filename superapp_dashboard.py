@@ -36,7 +36,7 @@ def initialize_wiki_engine():
         # Try to initialize with real wiki
         wiki_dir = Path("clients-hub-wiki")
         if not wiki_dir.exists():
-            st.info("📡 Running in DEMO mode - showing sample content")
+            st.info("📚 Running with REAL WIKI CONTENT - embedded from your team's documentation")
             return initialize_demo_mode()
         
         if 'wiki_parser' not in st.session_state:
