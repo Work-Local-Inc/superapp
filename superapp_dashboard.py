@@ -179,14 +179,41 @@ def load_project_data():
         "repositories": {
             "clients-hub": {
                 "url": "https://github.com/Shared-Concepts/clients-hub",
-                "description": "Account management and client hub backend",
+                "description": "Multi-tenant account management with sophisticated role system",
                 "status": "Active Development",
                 "lead": "Nick Denysov",
-                "features": ["Account Signup", "Account Invitations", "Invites Management", "Members Management", "Permissions System"],
-                "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions"
+                "features": [
+                    "Account Signup & Email Confirmation", 
+                    "7-day Invite Links System", 
+                    "Multi-Account User Management", 
+                    "4-Tier Role Permissions (Owner/Admin/Manager/Staff)",
+                    "Default Account Auto-Creation",
+                    "Inactive Account Handling"
+                ],
+                "wiki": "https://github.com/Shared-Concepts/clients-hub/wiki",
+                "wiki_pages": 4,
+                "documentation_quality": "Comprehensive"
             }
         },
         "recent_activity": [
+            {
+                "title": "Brevo Laravel Integration Research",
+                "description": "Nick researching native Laravel mailing approach with Brevo",
+                "timestamp": "Today",
+                "author": "Nick Denysov",
+                "type": "research",
+                "link": None,
+                "icon": "🔬"
+            },
+            {
+                "title": "Comprehensive Wiki Documentation",
+                "description": "4 detailed pages covering Account Management, User System, Permissions Matrix",
+                "timestamp": "Today",
+                "author": "Development Team",
+                "type": "docs",
+                "link": "https://github.com/Shared-Concepts/clients-hub/wiki",
+                "icon": "📚"
+            },
             {
                 "title": "Clients Hub Repository Initialized",
                 "description": "Nick set up the account management backend repository",
@@ -222,15 +249,6 @@ def load_project_data():
                 "type": "docs",
                 "link": "https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions",
                 "icon": "📖"
-            },
-            {
-                "title": "Dashboard Updated with Repository Links",
-                "description": "Added project repository tracking and context",
-                "timestamp": "Just now",
-                "author": "Brian",
-                "type": "dashboard",
-                "link": None,
-                "icon": "📊"
             }
         ]
     }
