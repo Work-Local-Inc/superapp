@@ -44,8 +44,8 @@ class GitSyncEngine:
             repo_abs_path = self.repo_path.resolve()
             os.chdir(repo_abs_path)
             
-            # Check if it's a git repository
-            if not (self.repo_path / ".git").exists():
+            # Check if it's a git repository (use current directory after cd)
+            if not Path(".git").exists():
                 os.chdir(original_cwd)
                 return {
                     "status": "error",
