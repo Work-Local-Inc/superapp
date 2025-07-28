@@ -273,9 +273,6 @@ def render_wiki_feed(feed_generator):
     # Generate the timeline of cards
     timeline = feed_generator.generate_activity_timeline()
     
-    # Debug info
-    st.info(f"🔍 Debug: Timeline has {len(timeline) if timeline else 0} cards. Type: {type(feed_generator).__name__}")
-    
     if not timeline:
         st.warning("📄 No wiki content found. Make sure the wiki repository is cloned and contains markdown files.")
         return
