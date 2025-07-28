@@ -49,6 +49,12 @@ def initialize_wiki_engine():
         if 'feed_generator' not in st.session_state:
             st.session_state.feed_generator = FeedGenerator(st.session_state.wiki_parser)
         
+        # Test if the real wiki has content
+        test_timeline = st.session_state.feed_generator.generate_activity_timeline()
+        if not test_timeline:
+            st.warning("📚 Real wiki has no content, using embedded content instead")
+            return initialize_real_wiki_content()
+        
         return st.session_state.wiki_parser, st.session_state.git_sync, st.session_state.feed_generator
     
     except Exception as e:
