@@ -51,47 +51,24 @@ class WikiCard:
             engagement = self.data.get('engagement_score', 0)
             read_time = self.data.get('content_stats', {}).get('read_time', 'Unknown')
             
-            # Use Streamlit container with proper styling
-            with st.container():
-                # Add CSS that will actually work
-                st.markdown("""
-                <style>
-                .stContainer:has(.wiki-card-content) {
-                    background: white !important;
-                    border: 1px solid #e5e7eb !important;
-                    border-radius: 16px !important;
-                    padding: 1.5rem !important;
-                    margin: 1rem 0 !important;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07) !important;
-                }
-                </style>
-                """, unsafe_allow_html=True)
-                
-                # Mark this as a wiki card container
-                st.markdown('<div class="wiki-card-content">', unsafe_allow_html=True)
-                
-                # Card header with icon, title, and priority
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    st.markdown(f"### {self.data.get('icon', '📄')} {self.data.get('title', 'Untitled')}")
-                with col2:
-                    priority = self.data.get('priority', 'low')
-                    priority_emoji = {"high": "🔥", "medium": "⚡", "low": "📄"}.get(priority, "📄")
-                    st.markdown(f"**{priority_emoji} {priority.title()}**")
+            # Simple, clean approach using Streamlit's built-in expander
+            with st.expander(f"{self.data.get('icon', '📄')} {self.data.get('title', 'Untitled')} ({self.data.get('priority', 'low').title()})", expanded=True):
                 
                 # Card summary
                 summary = self.data.get('summary', 'No summary available')
-                st.markdown(f"*{summary}*")
+                st.markdown(summary)
                 
-                # Divider
-                st.markdown("---")
-                
-                # Stats row
-                st.markdown(f"📚 **{features_count} features** • ⚡ **{engagement}/100** • ⏱️ **{read_time}**")
+                # Stats in columns
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("📚 Features", features_count)
+                with col2:
+                    st.metric("⚡ Score", f"{self.data.get('engagement_score', 0)}/100")
+                with col3:
+                    st.metric("⏱️ Read Time", read_time)
                 
                 # Action buttons
                 col1, col2 = st.columns(2)
-                
                 with col1:
                     if st.button("📖 View Details", 
                                key=f"view_{self.data.get('id', 'card')}", 
@@ -103,8 +80,6 @@ class WikiCard:
                                key=f"wiki_{self.data.get('id', 'card')}", 
                                use_container_width=True):
                         st.info("📝 Would open wiki page in new tab")
-                
-                st.markdown('</div>', unsafe_allow_html=True)
     
     def _show_full_content(self):
         """
