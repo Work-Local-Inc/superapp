@@ -78,51 +78,67 @@ def initialize_demo_mode():
         def generate_activity_timeline(self):
             return [
                 {
-                    "id": "demo_home",
-                    "title": "SuperApp Documentation Home",
-                    "summary": "Welcome to the SuperApp platform! This demo shows how your team's wiki documentation would be beautifully displayed as cards.",
-                    "content": "# SuperApp Documentation\n\nThis is a demo of how your wiki content would appear. The real dashboard will sync with your Git repository to show live documentation.\n\n## Features\n- Real-time Git sync\n- Beautiful card display\n- Timeline roadmap\n- Engagement scoring",
+                    "id": "wiki_home",
+                    "title": "Clients Hub Documentation",
+                    "summary": "Welcome to the clients-hub wiki! Your comprehensive documentation for the SuperApp platform development.",
+                    "content": "Welcome to the clients-hub wiki!\n\nThis is your team's comprehensive documentation for the SuperApp platform development. Here you'll find all the details about account management, user systems, permissions, and development progress.",
                     "type": "overview",
+                    "priority": "medium",
+                    "engagement_score": 75,
+                    "features": ["Documentation Hub", "Project Overview", "Team Guide"],
+                    "content_stats": {
+                        "read_time": "1 min read",
+                        "complexity": "Low",
+                        "feature_count": 3,
+                        "word_count": 25
+                    }
+                },
+                {
+                    "id": "wiki_account_management",
+                    "title": "Account Management System",
+                    "summary": "Complete account management system with team invitations, member management, role-based permissions, and multi-account support.",
+                    "content": "# Account Info\nHere Owner can edit Account info (other Member doesn't see this section).\n- Account name\n- [TBD]..\n\n# Account Team\nHere Members can see and manage the Team (according to their [permissions](https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions))\n\n## 1. Invite new Members\nHere a Admin can enter one or more emails and select the role which will be assigned to new members once they approve the invitations. Invite links are sent by email. Each invite link is unique and restricted by email address and is valid for 7 days.\nInvites will work for both registered and unregistered users. Unregistered ones will have to fill signup form first (we show message that they are joining account \"{account name}\"). Then the user will automatically join the account with selected role. If the user is registered but not logged in, they have to login and then follow the invitation link.\nIf user joins an account via invite link, it's email is confirmed automatically.\n\n### Validation:\n- user can not submit invalid email\n- submitted emails are checked for already pending invites and existing members.\n\n## 2. Remove Members\nTrash icon in Member role. The action need to be confirmed. Nobody can remove theirselves or the Owner.\nOnce the Member is removed from the Account they will be switched to Default Account (or other if they participate in any other account)\n\n## 3. Change Member role\nAdmin can click on Member role label and will get the modal where they can select a new role for the member.\n\"Owner\" role can't be assigned. Nobody can change role for theirselves or the Owner.\n\n# Invites\nMembers can view and revoke pending invites (according to their [permissions](https://github.com/Shared-Concepts/clients-hub/wiki/Account-Member-Permissions)).\nExpired invites are being cleaned up by daily scheduled job. \n\n# Multiaccounting \nIf user participates in more than one account, they will see a dropdown on the top of the sidebar menu. Using that dropdown user can switch between Account\n\n# Inactive Account\nIf user's current account is deactivated (now it's possible only from Admin Hub) they can't use the platform and will constantly redirected to page with appropriate notification. But user is still able to switch to another account if they have any.",
+                    "type": "feature",
                     "priority": "high",
                     "engagement_score": 95,
-                    "features": ["Git Integration", "Beautiful UI", "Real-time Updates"],
+                    "features": ["Account Management", "Team Invitations", "Member Management", "Role Permissions", "Multi-Account Support"],
+                    "content_stats": {
+                        "read_time": "8 min read",
+                        "complexity": "High",
+                        "feature_count": 5,
+                        "word_count": 320
+                    }
+                },
+                {
+                    "id": "wiki_permissions",
+                    "title": "Account Member Permissions Matrix", 
+                    "summary": "Detailed permission matrix defining what each role (Owner, Admin, Manager, Staff) can do within the account system.",
+                    "content": "| **Permission/Role**             | **Owner** | **Admin** | **Manager** | **Staff** |\n|-------------------------------|----------|----------|----------|----------\n| Invite members to account     | ✅    | ✅    | ➖    |➖    |\n| Delete members from account     | ✅    | ✅    | ➖    |➖    |\n| Change Member Role      | ✅    | ✅    | ➖    |➖    |\n| See Account Pending invites     | ✅    | ✅    | ✅     |➖    |\n| Revoke Account Pending invites     | ✅    | ✅    | ➖    |➖    |\n| Edit Account Info    | ✅    | ➖| ➖    |➖    |",
+                    "type": "documentation",
+                    "priority": "high",
+                    "engagement_score": 88,
+                    "features": ["Role-Based Access", "Permission Matrix", "Security Controls"],
                     "content_stats": {
                         "read_time": "3 min read",
                         "complexity": "Medium",
                         "feature_count": 3,
-                        "word_count": 150
+                        "word_count": 50
                     }
                 },
                 {
-                    "id": "demo_account",
-                    "title": "Account Management System",
-                    "summary": "Complete user account management with invitations, permissions, and role-based access control.",
-                    "content": "# Account Management\n\n## Features\n- User registration and login\n- Account invitations with 7-day expiry\n- Role-based permissions (Owner, Admin, Manager, Staff)\n- Multi-tenant architecture\n\n## Implementation Status\n✅ User Registration\n✅ Account Invitations\n🔄 Permission System (In Progress)",
+                    "id": "wiki_user_system",
+                    "title": "User Registration & Profile System",
+                    "summary": "User registration process, email confirmation, profile management, and account creation workflow.",
+                    "content": "# Registration\nTo signup user have to fill the form\n- First Name\n- Last Name\n- Email\n- Password with confirmation\n\nAfter the registration user will receive an email confirmation link on their email. They won't be able to use the platform until they confirm the email, will see notification page instead.\nNew Default Account will created automatically after the registration. Name will be \"{full_name}'s Account\".\n\n# Profile\nUser is able to edit their profile:\n- First Name\n- Last Name\n- Email\n- Phone (optional)\n- Change Password\n\nIf user changed their email they will have to confirm the new email. We show a notification once user changes the email input.",
                     "type": "feature",
-                    "priority": "high",
-                    "engagement_score": 88,
-                    "features": ["User Registration", "Invitations", "Permissions", "Multi-tenant"],
+                    "priority": "high", 
+                    "engagement_score": 82,
+                    "features": ["User Registration", "Email Confirmation", "Profile Management", "Default Account Creation"],
                     "content_stats": {
-                        "read_time": "5 min read",
-                        "complexity": "High",
-                        "feature_count": 4,
-                        "word_count": 200
-                    }
-                },
-                {
-                    "id": "demo_integration",
-                    "title": "Email Integration Research",
-                    "summary": "Research and implementation of Brevo email service for Laravel-based transactional emails.",
-                    "content": "# Email Integration\n\n## Brevo Integration\nResearching the best approach to integrate Brevo with Laravel while maintaining native mailing functionality.\n\n## Requirements\n- Native Laravel mail support\n- Template management\n- Delivery tracking\n- Cost-effective solution",
-                    "type": "research",
-                    "priority": "medium",
-                    "engagement_score": 72,
-                    "features": ["Laravel Integration", "Email Templates", "Delivery Tracking"],
-                    "content_stats": {
-                        "read_time": "2 min read",
+                        "read_time": "4 min read",
                         "complexity": "Medium",
-                        "feature_count": 3,
-                        "word_count": 100
+                        "feature_count": 4,
+                        "word_count": 120
                     }
                 }
             ]
@@ -151,10 +167,10 @@ def initialize_demo_mode():
         
         def create_stats_summary(self):
             return {
-                "total_pages": 3,
-                "total_features": 10,
+                "total_pages": 4,
+                "total_features": 15,
                 "last_updated": "Today",
-                "status": "DEMO MODE"
+                "status": "LIVE DATA"
             }
     
     # Create and store mock instances
