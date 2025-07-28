@@ -96,7 +96,7 @@ def render_dashboard_header_section(feed_generator):
     stats_card.render()
     
     # Roadmap cards
-    st.markdown("## 🗺️ Project Roadmap")
+    st.markdown("## Project Roadmap")
     roadmap_data = feed_generator.generate_roadmap_cards()
     
     cols = st.columns(len(roadmap_data))
@@ -152,39 +152,39 @@ def render_sidebar():
     📋 Render the sidebar with additional controls and info
     """
     with st.sidebar:
-        st.markdown("# 🎪 Monday Madness Control Panel")
+        st.markdown("# Control Panel")
         
         # Wiki status
-        st.markdown("## 📊 Wiki Status")
+        st.markdown("## Wiki Status")
         
         if hasattr(st.session_state, 'wiki_parser'):
             wiki_files = st.session_state.wiki_parser.get_all_wiki_files()
-            st.metric("📚 Wiki Files", len(list(wiki_files)))
+            st.metric("Wiki Files", len(list(wiki_files)))
         
         if hasattr(st.session_state, 'feed_generator'):
             cache_size = len(st.session_state.feed_generator.feed_cache)
-            st.metric("💾 Cached Cards", cache_size)
+            st.metric("Cached Cards", cache_size)
         
         st.markdown("---")
         
         # Dashboard controls
-        st.markdown("## ⚙️ Dashboard Controls")
+        st.markdown("## Dashboard Controls")
         
-        if st.button("🧹 Clear Cache"):
+        if st.button("Clear Cache"):
             if hasattr(st.session_state, 'feed_generator'):
                 st.session_state.feed_generator.feed_cache.clear()
-                st.success("✅ Cache cleared!")
+                st.success("Cache cleared!")
         
-        if st.button("🔄 Force Refresh"):
+        if st.button("Force Refresh"):
             # Clear all session state and reload
             for key in list(st.session_state.keys()):
                 if key.startswith(('wiki_', 'git_', 'feed_')):
                     del st.session_state[key]
-            st.success("✅ Dashboard refreshed!")
+            st.success("Dashboard refreshed!")
             st.rerun()
         
         st.markdown("---")
-        st.caption("🎨 Built with Monday Madness energy by SuperApp Team")
+        st.caption("Built with Monday Madness energy by SuperApp Team")
 
 def main():
     """
