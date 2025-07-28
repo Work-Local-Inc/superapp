@@ -1,5 +1,5 @@
-/* 
-🎨 SuperApp Wiki Social Feed - Design System
+/*
+🎨 SuperApp Documentation Dashboard - Card Design System
 Monday Madness Implementation - Making Documentation BEAUTIFUL!
 */
 
@@ -20,7 +20,7 @@ Monday Madness Implementation - Making Documentation BEAUTIFUL!
   --alive-gradient: linear-gradient(135deg, var(--primary-blue), var(--madness-purple));
 }
 
-/* ===== SOCIAL FEED CARDS ===== */
+/* ===== DOCUMENTATION CARDS ===== */
 .wiki-card {
   background: var(--card-bg);
   border: 1px solid var(--border-subtle);

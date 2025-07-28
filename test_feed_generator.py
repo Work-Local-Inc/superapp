@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-🧪 Test our FeedGenerator - Social Media Magic for Wiki Content!
-Monday Madness Feed Generation Quality Assurance! 
+🧪 Test our FeedGenerator - Dashboard Cards for Wiki Content!
+Monday Madness Documentation Display Quality Assurance! 
 """
 
 from wiki_engine.feed_generator import FeedGenerator
@@ -38,7 +38,7 @@ def test_feed_generator():
         print(f"⚡ Engagement: {card['engagement_score']}/100")
         print(f"🎪 Energy Level: {card['monday_madness_level']}")
         print(f"📚 Features: {len(card['features'])}")
-        print(f"⏱️  Read Time: {card['social_stats']['read_time']}")
+        print(f"⏱️  Read Time: {card['content_stats']['read_time']}")
         print(f"🎨 Style Class: {card['style_class']}")
         
         if card['features']:
@@ -100,7 +100,7 @@ def test_feed_generator():
         print(f"   💾 {cached_file}")
     
     print("\n" + "=" * 70)
-    print("🎉 FeedGenerator Test Complete! SOCIAL FEED MAGIC ACTIVATED! 🎪✨")
+    print("🎉 FeedGenerator Test Complete! DASHBOARD CARDS ACTIVATED! 🎪✨")
     
     # Show the best card
     if timeline:

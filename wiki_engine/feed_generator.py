@@ -1,5 +1,5 @@
 """
-FeedGenerator - Transform Wiki Content into Social Media Magic
+FeedGenerator - Transform Wiki Content into Dashboard Cards
 """
 
 from datetime import datetime
@@ -8,7 +8,7 @@ from .wiki_parser import WikiParser
 
 class FeedGenerator:
     """
-    🎨 The artist that creates beautiful social feed cards from wiki content
+    🎨 The artist that creates beautiful dashboard cards from wiki content
     
     Monday Madness Level: CREATIVE GENIUS! 🎪
     """
@@ -19,7 +19,7 @@ class FeedGenerator:
         
     def create_wiki_card(self, wiki_page: str) -> Dict:
         """
-        🎯 Create a stunning social card from a wiki page
+        🎯 Create a stunning dashboard card from a wiki page
         
         Args:
             wiki_page: Path to wiki markdown file
@@ -43,8 +43,8 @@ class FeedGenerator:
         # Generate contextual action buttons
         actions = self.generate_action_buttons(card_data["type"])
         
-        # Create the final social card
-        social_card = {
+        # Create the final dashboard card
+        dashboard_card = {
             "id": f"wiki_card_{card_data['id']}",
             "title": card_data["title"],
             "summary": card_data["summary"],
@@ -63,7 +63,7 @@ class FeedGenerator:
             "style_class": self._get_card_style_class(card_data["type"], priority),
             "icon": self._get_card_icon(card_data["type"]),
             "monday_madness_level": metrics["engagement_potential"],
-            "social_stats": {
+            "content_stats": {
                 "read_time": f"{metrics['estimated_read_time']} min read",
                 "complexity": metrics["complexity_score"],
                 "feature_count": metrics["feature_count"],
@@ -72,9 +72,9 @@ class FeedGenerator:
         }
         
         # Cache the card for performance
-        self.feed_cache[wiki_page] = social_card
+        self.feed_cache[wiki_page] = dashboard_card
         
-        return social_card
+        return dashboard_card
     
     def generate_activity_timeline(self) -> List[Dict]:
         """
@@ -155,7 +155,7 @@ class FeedGenerator:
                 "features": ["Wiki Engine", "Parser", "Sync"]
             },
             {
-                "phase": "Social Feed",
+                "phase": "Dashboard Cards",
                 "status": "in_progress", 
                 "progress": 0,
                 "features": ["Cards", "Timeline", "Mobile"]
