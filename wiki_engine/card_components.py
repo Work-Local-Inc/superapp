@@ -55,13 +55,17 @@ class WikiCard:
             priority = self.data.get('priority', 'low').title()
             title = self.data.get('title', 'Untitled')
             
-            # Clean title with priority badge only if high priority
-            if priority == "High":
-                card_title = f"{title} - High Priority"
-            else:
-                card_title = title
-            
-            with st.expander(card_title, expanded=True):
+            # Use minimal expander label and add proper header inside
+            with st.expander("View Details", expanded=True):
+                
+                # Proper card header inside the expander
+                if priority == "High":
+                    st.markdown(f"### {title}")
+                    st.markdown("*High Priority*")
+                else:
+                    st.markdown(f"### {title}")
+                
+                st.markdown("---")
                 
                 # Card summary
                 summary = self.data.get('summary', 'No summary available')
@@ -182,51 +186,215 @@ class ActionButton:
         """
         return st.button(self.icon, key=key, help=self.label)
 
-class RoadmapCard:
+class TimelineRoadmap:
     """
-    🗺️ Special card for roadmap display in header
-    
-    Monday Madness Level: STRATEGIC! 🎯
+    🗺️ Beautiful timeline-style roadmap component
+    Displays project phases in a horizontal timeline with progress indicators
     """
     
-    def __init__(self, phase_data: Dict):
-        self.phase = phase_data["phase"]
-        self.status = phase_data["status"]
-        self.progress = phase_data["progress"]
-        self.features = phase_data.get("features", [])
-        
+    def __init__(self, roadmap_data: List[Dict]):
+        self.roadmap_data = roadmap_data
+    
     def render(self) -> None:
         """
-        🗺️ Render roadmap phase card
+        🎨 Render the timeline roadmap with beautiful styling
         """
-        with st.container():
-            # Header row
-            col1, col2 = st.columns([3, 1])
+        st.markdown("### Project Roadmap")
+        st.markdown("*Our journey to building the SuperApp platform*")
+        
+        # Custom CSS for timeline styling
+        st.markdown("""
+        <style>
+        .timeline-container {
+            position: relative;
+            margin: 2rem 0;
+            padding: 1rem 0;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50 0%, #2196F3 50%, #FF9800 100%);
+            border-radius: 2px;
+            z-index: 1;
+        }
+        
+        .timeline-items {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #e1e5e9;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        .timeline-item.completed {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #f8fff8, #ffffff);
+        }
+        
+        .timeline-item.in-progress, .timeline-item.in_progress {
+            border-color: #2196F3;
+            background: linear-gradient(135deg, #f0f8ff, #ffffff);
+        }
+        
+        .timeline-item.pending {
+            border-color: #FF9800;
+            background: linear-gradient(135deg, #fff8f0, #ffffff);
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .timeline-dot.completed { background: #4CAF50; }
+        .timeline-dot.in-progress, .timeline-dot.in_progress { background: #2196F3; }
+        .timeline-dot.pending { background: #FF9800; }
+        
+        .phase-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .phase-progress {
+            width: 100%;
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill.completed { background: #4CAF50; }
+        .progress-fill.in-progress, .progress-fill.in_progress { background: #2196F3; }
+        .progress-fill.pending { background: #FF9800; }
+        
+        .phase-features {
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .phase-status {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            margin-top: 0.5rem;
+        }
+        
+        .phase-status.completed {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .phase-status.in-progress, .phase-status.in_progress {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .phase-status.pending {
+            background: #FF9800;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Build timeline HTML
+        timeline_html = '<div class="timeline-container">'
+        timeline_html += '<div class="timeline-line"></div>'
+        timeline_html += '<div class="timeline-items">'
+        
+        for phase in self.roadmap_data:
+            status = phase.get('status', 'pending')
+            progress = phase.get('progress', 0)
+            features = phase.get('features', [])
             
-            with col1:
-                st.markdown(f"### 🗺️ {self.phase}")
-                
-            with col2:
-                st.metric("Progress", f"{self.progress}%")
+            timeline_html += f'''
+            <div class="timeline-item {status}">
+                <div class="timeline-dot {status}"></div>
+                <div class="phase-title">{phase.get('phase', 'Unknown Phase')}</div>
+                <div class="phase-progress">
+                    <div class="progress-fill {status}" style="width: {progress}%"></div>
+                </div>
+                <div class="phase-status {status}">{status.replace('-', ' ').replace('_', ' ')}</div>
+                <div class="phase-features">
+                    {len(features)} key features
+                </div>
+            </div>
+            '''
+        
+        timeline_html += '</div></div>'
+        
+        # Render the timeline
+        st.markdown(timeline_html, unsafe_allow_html=True)
+        
+        # Feature details below timeline
+        with st.expander("View Detailed Features"):
+            cols = st.columns(len(self.roadmap_data))
             
-            # Progress bar with color based on status
-            if self.status == "complete":
-                st.success(f"✅ Complete")
-            elif self.status == "in_progress":
-                st.info(f"🔄 In Progress")
-            else:
-                st.warning(f"📅 Pending")
-                
-            st.progress(self.progress / 100)
-            
-            # Features list
-            if self.features:
-                st.markdown("**Key Deliverables:**")
-                for feature in self.features:
-                    feature_status = "✅" if self.status == "complete" else "🔄" if self.status == "in_progress" else "📋"
-                    st.markdown(f"- {feature_status} {feature}")
-            
-            st.markdown("---")
+            for i, phase in enumerate(self.roadmap_data):
+                with cols[i]:
+                    st.markdown(f"**{phase.get('phase', 'Unknown')}**")
+                    st.progress(phase.get('progress', 0) / 100)
+                    st.caption(f"{phase.get('progress', 0)}% Complete")
+                    
+                    features = phase.get('features', [])
+                    if features:
+                        for feature in features:
+                            st.markdown(f"• {feature}")
+                    else:
+                        st.markdown("*No features defined*")
+
+
+class RoadmapCard:
+    """
+    🗺️ Legacy roadmap card - keeping for compatibility
+    """
+    
+    def __init__(self, roadmap_data: List[Dict]):
+        self.roadmap_data = roadmap_data
+    
+    def render(self) -> None:
+        """
+        📊 Render roadmap using the new timeline style
+        """
+        timeline = TimelineRoadmap(self.roadmap_data)
+        timeline.render()
+
 
 class StatsCard:
     """

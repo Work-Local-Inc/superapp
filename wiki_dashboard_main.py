@@ -15,7 +15,7 @@ from datetime import datetime
 sys.path.append(str(Path(__file__).parent))
 
 from wiki_engine import WikiParser, GitSyncEngine, FeedGenerator
-from wiki_engine.card_components import WikiCard, RoadmapCard, StatsCard, render_dashboard_header
+from wiki_engine.card_components import WikiCard, RoadmapCard, StatsCard, TimelineRoadmap, render_dashboard_header
 
 def load_custom_css():
     """
@@ -95,15 +95,7 @@ def render_dashboard_header_section(feed_generator):
     stats_card = StatsCard(stats_data)
     stats_card.render()
     
-    # Roadmap cards
-    st.markdown("## Project Roadmap")
-    roadmap_data = feed_generator.generate_roadmap_cards()
-    
-    cols = st.columns(len(roadmap_data))
-    for i, phase_data in enumerate(roadmap_data):
-        with cols[i]:
-            roadmap_card = RoadmapCard(phase_data)
-            roadmap_card.render()
+
 
 def render_wiki_feed(feed_generator):
     """
@@ -146,6 +138,14 @@ def render_wiki_feed(feed_generator):
             # Add some spacing between cards
             if i < len(timeline) - 1:
                 st.markdown("<br>", unsafe_allow_html=True)
+
+def render_timeline_roadmap(feed_generator):
+    """
+    🗺️ Render the beautiful timeline-style roadmap
+    """
+    roadmap_data = feed_generator.generate_roadmap_cards()
+    timeline_roadmap = TimelineRoadmap(roadmap_data)
+    timeline_roadmap.render()
 
 def render_sidebar():
     """
@@ -194,7 +194,7 @@ def main():
     st.set_page_config(
         page_title="SuperApp Wiki Dashboard",
         page_icon="🚀",
-        layout="wide",
+        layout="centered",
         initial_sidebar_state="expanded"
     )
     
@@ -219,6 +219,10 @@ def main():
         
         # Wiki feed section
         render_wiki_feed(feed_generator)
+        
+        # Timeline roadmap section
+        st.markdown("---")
+        render_timeline_roadmap(feed_generator)
         
         # Footer
         st.markdown("---")
