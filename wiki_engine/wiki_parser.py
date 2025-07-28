@@ -299,4 +299,13 @@ class WikiParser:
         elif "api" in content_lower or "endpoint" in content_lower:
             return "api_documentation"
         else:
-            return "general_documentation" 
+            return "general_documentation"
+    
+    def get_all_wiki_files(self):
+        """
+        📁 Get all markdown files in the wiki directory
+        """
+        if not self.wiki_dir.exists():
+            return []
+        
+        return list(self.wiki_dir.glob("*.md")) 
