@@ -68,11 +68,9 @@ class WikiCard:
                     <div class="card-stats">
                         <p>📚 <strong>{features_count} features</strong> • ⚡ <strong>{engagement}/100</strong> • ⏱️ <strong>{read_time}</strong></p>
                     </div>
-                </div>
-            </div>
             """, unsafe_allow_html=True)
             
-            # Action buttons still need to be outside for Streamlit functionality
+            # Action buttons INSIDE the card container
             col1, col2 = st.columns(2)
             
             with col1:
@@ -86,6 +84,9 @@ class WikiCard:
                            key=f"wiki_{self.data.get('id', 'card')}", 
                            use_container_width=True):
                     st.info("📝 Would open wiki page in new tab")
+            
+            # Close the card container
+            st.markdown("</div></div>", unsafe_allow_html=True)
     
     def _show_full_content(self):
         """
