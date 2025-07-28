@@ -3,7 +3,27 @@ Card Components - Beautiful UI Elements for Our Social Feed
 """
 
 from typing import Dict, List, Optional
-import streamlit as st
+
+# Optional Streamlit import for testing
+try:
+    import streamlit as st
+    STREAMLIT_AVAILABLE = True
+except ImportError:
+    STREAMLIT_AVAILABLE = False
+    # Mock streamlit for testing
+    class MockStreamlit:
+        def container(self): return self
+        def markdown(self, text, **kwargs): pass
+        def info(self, text): pass
+        def json(self, data): pass
+        def columns(self, cols): return [self] * (cols if isinstance(cols, int) else len(cols))
+        def button(self, label, **kwargs): return False
+        def progress(self, value): pass
+        def metric(self, label, value): pass
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+    
+    st = MockStreamlit()
 
 class WikiCard:
     """
