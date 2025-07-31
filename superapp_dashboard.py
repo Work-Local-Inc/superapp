@@ -86,13 +86,13 @@ def initialize_real_wiki_content():
             return [
                 {
                     "id": "wiki_home",
-                    "title": "Clients Hub Documentation",
-                    "summary": "Welcome to the clients-hub wiki! Your comprehensive documentation for the SuperApp platform development.",
-                    "content": "Welcome to the clients-hub wiki!\n\nThis is your team's comprehensive documentation for the SuperApp platform development. Here you'll find all the details about account management, user systems, permissions, and development progress.",
-                    "type": "overview",
-                    "priority": "medium",
-                    "engagement_score": 75,
-                    "features": ["Documentation Hub", "Project Overview", "Team Guide"],
+                    "title": "SuperApp Platform - Self-Signup Vision",
+                    "summary": "BREAKTHROUGH: Foundation complete! Moving to self-signup business onboarding with multi-vertical scaling strategy.",
+                    "content": "MAJOR UPDATE: Foundation & Backend phase is 95% complete!\n\n✅ Laravel Backend Structure\n✅ Role Permissions System\n✅ Account Management\n✅ Brevo Email Integration\n\nNEXT PHASE: James confirmed SELF-SIGNUP flow:\nUser signs up → Creates Business → Builds menu/services → Customers order\n\nSCALING STRATEGY: Universal business model supporting Food → Spa → Gym → Trade verticals",
+                    "type": "strategic",
+                    "priority": "high",
+                    "engagement_score": 90,
+                    "features": ["Self-Signup Strategy", "Multi-Vertical Scaling", "Universal Business Model"],
                     "content_stats": {
                         "read_time": "1 min read",
                         "complexity": "Low",
@@ -147,6 +147,22 @@ def initialize_real_wiki_content():
                         "feature_count": 4,
                         "word_count": 120
                     }
+                },
+                {
+                    "id": "wiki_business_creation",
+                    "title": "Business Creation Flow - Self-Signup Strategy",
+                    "summary": "James confirmed self-signup flow: User registration → Business creation → Menu building → Customer ordering. Ready for multi-vertical scaling.",
+                    "content": "# STRATEGIC UPDATE: Self-Signup Flow\n\nJames has confirmed the SuperApp onboarding strategy:\n\n## New Flow:\n1. **Business Owner signs up** (self-service)\n2. **Owner creates Business** (Restaurant/Spa/Gym/Trade)\n3. **Owner builds menu/services**\n4. **Customers discover & order**\n5. **Revenue flows with commission model**\n\n## Multi-Vertical Ready:\n- Universal Business model\n- Same permissions system\n- Same payment processing\n- Same email infrastructure\n\nThis enables rapid scaling across Food → Spa → Gym → Trade verticals with minimal additional development.",
+                    "type": "implementation",
+                    "priority": "high",
+                    "engagement_score": 95,
+                    "features": ["Self-Signup Flow", "Business Onboarding", "Multi-Vertical Support", "Scaling Strategy"],
+                    "content_stats": {
+                        "read_time": "3 min read",
+                        "complexity": "Medium",
+                        "feature_count": 4,
+                        "word_count": 150
+                    }
                 }
             ]
         
@@ -154,30 +170,36 @@ def initialize_real_wiki_content():
             return [
                 {
                     "phase": "Foundation & Backend",
+                    "status": "completed",
+                    "progress": 95,
+                    "features": ["Laravel Backend ✅", "Role Permissions ✅", "Account Management ✅", "Brevo Email ✅", "User System ✅"]
+                },
+                {
+                    "phase": "Business Creation Flow", 
                     "status": "in_progress",
-                    "progress": 75,
-                    "features": ["Laravel Backend", "Database Schema", "Account Management", "User System"]
+                    "progress": 25,
+                    "features": ["Self-Signup Flow", "Business Onboarding", "Business Type Selection", "Multi-Business Support"]
                 },
                 {
-                    "phase": "Food Vertical",
-                    "status": "pending",
-                    "progress": 15,
-                    "features": ["Restaurant Management", "Menu System", "Order Processing", "Payment Integration"]
+                    "phase": "Food Vertical MVP",
+                    "status": "pending", 
+                    "progress": 10,
+                    "features": ["Menu Management", "Order Processing", "Stripe Integration", "Customer Discovery"]
                 },
                 {
-                    "phase": "Multi-Vertical Platform",
+                    "phase": "Multi-Vertical Scaling",
                     "status": "pending",
                     "progress": 5,
-                    "features": ["Spa Booking", "Gym Memberships", "Trade Services", "Unified Dashboard"]
+                    "features": ["Spa Services", "Gym Memberships", "Trade Quotes", "Universal Business Model"]
                 }
             ]
         
         def create_stats_summary(self):
             return {
-                "total_pages": 4,
-                "total_features": 15,
+                "total_pages": 5,
+                "total_features": 22,
                 "last_updated": "Today",
-                "status": "LIVE DATA"
+                "status": "FOUNDATION COMPLETE 🚀"
             }
     
     # Create and store mock instances
